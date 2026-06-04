@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recomp">
+<meta name="theme-color" content="#111111">
+<title>Recomp Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #111111;
+    --surface: #1c1c1e;
+    --surface2: #2c2c2e;
+    --border: rgba(255,255,255,0.08);
+    --text: #f2f2f7;
+    --muted: #8e8e93;
+    --accent: #0a84ff;
+    --accent-bg: rgba(10,132,255,0.15);
+    --success: #30d158;
+    --warning: #ffd60a;
+    --danger: #ff453a;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--bg);
+    padding: calc(var(--safe-top) + 16px) 20px 16px;
+    border-bottom: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .app-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .app-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .app-subtitle { font-size: 13px; color: var(--muted); }
+  .header-stats { display: flex; gap: 20px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 17px; font-weight: 600; }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* DAY PILLS */
+  .day-pills {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 0 20px 0;
+    scrollbar-width: none;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+  .day-pills::-webkit-scrollbar { display: none; }
+  .day-pill {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .day-pill.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 20px 20px calc(var(--safe-bottom) + 20px);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .day-view { display: none; }
+  .day-view.active { display: block; }
+
+  /* DAY HEADER CARD */
+  .day-header {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .day-tag {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .day-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
+  .day-muscles { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .day-focus { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+  /* RPE BOX */
+  .rpe-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .rpe-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .rpe-scale { display: flex; gap: 6px; margin-bottom: 8px; }
+  .rpe-zone {
+    flex: 1;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .rpe-zone.easy { background: rgba(48,209,88,0.15); color: var(--success); }
+  .rpe-zone.work { background: rgba(255,214,10,0.15); color: var(--warning); }
+  .rpe-zone.hard { background: rgba(255,69,58,0.15); color: var(--danger); }
+  .rpe-note { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .info-box strong { color: var(--accent); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* EXERCISE CARDS */
+  .ex-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .ex-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    background: var(--surface2);
+  }
+  .ex-img-placeholder {
+    width: 100%;
+    height: 180px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+  .ex-body { padding: 12px 16px; }
+  .ex-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .ex-name-row { display: flex; align-items: center; margin-bottom: 8px; }
+  .ex-name { font-size: 15px; font-weight: 600; }
+  .ex-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .badge {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 0.5px solid var(--border);
+  }
+  .badge.accent { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
+  .tip-toggle {
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tip-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 0.5px solid var(--border);
+    display: none;
+  }
+  .tip-text.open { display: block; }
+
+  /* REST / CARDIO */
+  .rest-list { list-style: none; }
+  .rest-list li {
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rest-list li:last-child { border-bottom: none; }
+  .rest-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .cardio-item { padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .cardio-item:last-child { border-bottom: none; }
+  .cardio-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .cardio-detail { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* WEEK BAR */
+  .week-bar {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-top: 20px;
+  }
+  .week-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .week-pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .week-pill.active {
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-color: transparent;
+  }
+
+  /* GROUND RULES */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rule-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .rule-icon { font-size: 20px; margin-bottom: 6px; }
+  .rule-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .rule-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* INSTALL BANNER */
+  .install-banner {
+    background: var(--accent-bg);
+    border: 0.5px solid rgba(10,132,255,0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    display: none;
+  }
+  .install-banner.show { display: block; }
+  .install-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-header-top">
+    <div>
+      <div class="app-title">Recomp Plan 💪</div>
+      <div class="app-subtitle">Gym · Beginner · Build muscle · Burn fat</div>
+    </div>
+  </div>
+  <div class="day-pills">
+    <button class="day-pill active" onclick="showDay('mon',this)">Mon</button>
+    <button class="day-pill" onclick="showDay('tue',this)">Tue</button>
+    <button class="day-pill" onclick="showDay('wed',this)">Wed</button>
+    <button class="day-pill" onclick="showDay('thu',this)">Thu</button>
+    <button class="day-pill" onclick="showDay('fri',this)">Fri</button>
+    <button class="day-pill" onclick="showDay('sat',this)">Sat</button>
+    <button class="day-pill" onclick="showDay('sun',this)">Sun</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ===== MON ===== -->
+  <div class="day-view active" id="day-mon">
+
+    <div class="install-banner" id="install-hint">
+      <div class="install-title">📲 Add to Home Screen</div>
+      Tap the <strong>Share</strong> button in Safari, then <strong>"Add to Home Screen"</strong> to install this as an app.
+    </div>
+
+    <div class="day-header">
+      <div class="day-tag">Upper body · Push</div>
+      <div class="day-title">Push day</div>
+      <div class="day-muscles">Chest · Shoulders · Triceps</div>
+      <div class="day-focus">Pushing movements — chest, front shoulders, back of arms. All machine and cable based so form is guided for you.</div>
+    </div>
+
+    <div class="rpe-box">
+      <div class="rpe-title">🎯 How to pick your weight</div>
+      <div class="rpe-scale">
+        <div class="rpe-zone easy">Too easy<br><span style="font-size:10px">add weight</span></div>
+        <div class="rpe-zone work">Working<br><span style="font-size:10px">target zone</span></div>
+        <div class="rpe-zone hard">Form breaks<br><span style="font-size:10px">reduce weight</span></div>
+      </div>
+      <div class="rpe-note">Last 2–3 reps should feel hard but your form stays clean. That's your working weight. Write it down and add a little each week.</div>
+    </div>
+
+    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill walk · 10 arm circles each direction · 10 shoulder rolls</div>
+
+    <div class="section-label">Exercises</div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/03/chest-press-machine.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Machine chest press">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Machine chest press</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Seat height: handles at mid-chest. Push straight out, don't flare elbows too wide. If you can do 12 easily, go heavier next set.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/05/seated-dumbbell-shoulder-press.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Seated dumbbell shoulder press">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated dumbbell shoulder press</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Start light. Press straight up overhead, don't arch your lower back. Back flat on the pad throughout.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/04/low-cable-chest-fly.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Cable chest fly">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable chest fly (low pulley)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Slight bend in elbows throughout. Squeeze at center like hugging a tree. Cables at the bottom, sweep upward and together.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/04/dumbbell-lateral-raise.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Lateral raises">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Lateral raises (dumbbells)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Raise only to shoulder height. Lead with elbows, not hands. Go lighter than you think — these isolate a small muscle.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/02/cable-rope-tricep-pushdown.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Tricep pushdown">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Tricep pushdown (cable, rope)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Keep elbows glued to your sides. Push down and flare the rope apart at the bottom. Full extension every rep.</div>
+      </div>
+    </div>
+
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Doorway chest stretch 30s each side</div>
+
+    <div class="section-label" style="margin-top:20px">📋 Ground rules</div>
+    <div class="rules-grid">
+      <div class="rule-card"><div class="rule-icon">🥩</div><div class="rule-title">Protein first</div><div class="rule-body">0.7–1g per lb of goal bodyweight daily. Eggs, chicken, Greek yogurt. Hit this before anything else.</div></div>
+      <div class="rule-card"><div class="rule-icon">📈</div><div class="rule-title">Progressive overload</div><div class="rule-body">Add a little weight or a rep every 1–2 weeks. That's how you keep getting stronger.</div></div>
+      <div class="rule-card"><div class="rule-icon">😴</div><div class="rule-title">Sleep = growth</div><div class="rule-body">Muscle is built during sleep. 7–9 hours is part of the program, not optional.</div></div>
+      <div class="rule-card"><div class="rule-icon">💧</div><div class="rule-title">Hydration</div><div class="rule-body">80–100oz of water daily. More on workout days. Dehydration kills performance.</div></div>
+      <div class="rule-card"><div class="rule-icon">🔁</div><div class="rule-title">Consistency wins</div><div class="rule-body">Missed a day? Pick back up. Two months of 80% beats one perfect week every time.</div></div>
+      <div class="rule-card"><div class="rule-icon">🚫</div><div class="rule-title">Don't skip legs</div><div class="rule-body">Leg day burns the most calories and releases the most growth hormone. It matters.</div></div>
+    </div>
+  </div>
+
+  <!-- ===== TUE ===== -->
+  <div class="day-view" id="day-tue">
+    <div class="day-header">
+      <div class="day-tag">Upper body · Pull</div>
+      <div class="day-title">Pull day</div>
+      <div class="day-muscles">Back · Biceps · Rear delts</div>
+      <div class="day-focus">Pulling movements build back width, posture, and arm thickness. Cables and dumbbells.</div>
+    </div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill · 10 arm swings · Cat-cow stretch 10 reps</div>
+    <div class="section-label">Exercises</div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/09/lat-pulldown.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Lat pulldown">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Lat pulldown (cable machine)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Pull bar to upper chest, lean back slightly. Imagine pulling your elbows down to your hips — not yanking with your arms.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/11/seated-cable-row.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Seated cable row">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated cable row</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Sit tall, pull handle to belly button. Squeeze shoulder blades together at the end. Don't round your back on the return.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/05/dumbbell-bicep-curl.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Bicep curl">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Dumbbell bicep curl</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">No swinging. 3 seconds on the way down. Keep elbows at your sides throughout.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/04/cable-face-pull.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Face pulls">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Face pulls (cable, rope at eye level)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Pull rope to your face, elbows flare outward. Great for posture and shoulder health. Don't skip this one.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/09/dumbbell-shrug.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Dumbbell shrugs">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Dumbbell shrugs</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Straight up and down — no rolling. Hold at the top for 1 second. Heavy is fine here.</div>
+      </div>
+    </div>
+
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Cross-body shoulder stretch 30s each arm · Lat stretch</div>
+  </div>
+
+  <!-- ===== WED ===== -->
+  <div class="day-view" id="day-wed">
+    <div class="day-header">
+      <div class="day-tag">Recovery</div>
+      <div class="day-title">Rest day</div>
+      <div class="day-muscles">Walk · Stretch · Recover</div>
+      <div class="day-focus">Muscles grow during rest, not during training. This day is literally part of the program.</div>
+    </div>
+    <div class="section-label">Today's goals</div>
+    <div class="info-box">
+      <ul class="rest-list">
+        <li><span class="rest-icon">🚶</span>Your 10k steps walk — keep this as your baseline habit</li>
+        <li><span class="rest-icon">🧘</span>15–20 min light stretching or beginner yoga (YouTube)</li>
+        <li><span class="rest-icon">🌙</span>Prioritize sleep tonight — 7–9 hours is when you actually grow</li>
+        <li><span class="rest-icon">💧</span>Hydrate — aim for 80–100oz of water</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== THU ===== -->
+  <div class="day-view" id="day-thu">
+    <div class="day-header">
+      <div class="day-tag">Lower body</div>
+      <div class="day-title">Leg day</div>
+      <div class="day-muscles">Quads · Hamstrings · Glutes · Calves</div>
+      <div class="day-focus">Legs are your biggest muscle group — this burns the most calories and releases the most growth hormone. Don't skip it.</div>
+    </div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min bike or treadmill · 10 bodyweight squats · 10 leg swings each side</div>
+    <div class="section-label">Exercises</div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/06/leg-press.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Leg press">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Leg press (machine)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Feet shoulder width, mid-platform. Don't lock knees at the top. Start lighter than you think — range of motion matters more than weight.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/02/leg-extension.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Leg extension">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Leg extension (machine)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Isolates your quads. Controlled — don't kick up fast. Slow on the way down. Full extension at the top.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/04/seated-leg-curl.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Leg curl">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Leg curl (seated or lying machine)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Hamstrings. Curl all the way through, squeeze at full contraction. Slow and controlled on the return.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/06/seated-hip-abduction.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Hip abduction">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Hip abduction machine</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Push outward against the pads. Great for glutes and hip stability. Don't just throw legs out — feel the squeeze at the top.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/11/calf-raise.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Calf raises">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Calf raises (machine or standing)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">20 reps</span><span class="badge">30s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Full range of motion — all the way up, all the way down. Slow descent. Calves respond best to high reps and full stretch.</div>
+      </div>
+    </div>
+
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Quad stretch 30s each · Seated hamstring stretch 45s each side</div>
+  </div>
+
+  <!-- ===== FRI ===== -->
+  <div class="day-view" id="day-fri">
+    <div class="day-header">
+      <div class="day-tag">Full body</div>
+      <div class="day-title">Full body / Core</div>
+      <div class="day-muscles">Compound moves · Abs · Stability</div>
+      <div class="day-focus">Compounds hit everything at once. Core work is invisible when you have it and obvious when you don't.</div>
+    </div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min walk · Hip circles · Arm swings · 5 inchworms</div>
+    <div class="section-label">Exercises</div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/10/goblet-squat.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Goblet squat">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Goblet squat (dumbbell)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Hold one dumbbell at chest height. Squat deep, chest up, knees track over toes. Elbows inside your knees at the bottom.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/08/dumbbell-romanian-deadlift.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Romanian deadlift">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Dumbbell Romanian deadlift</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">60s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Hinge at hips, soft knees. Feel the stretch in your hamstrings. Flat back always. Dumbbells stay close to your legs throughout.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/06/cable-woodchop.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Cable woodchop">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable woodchop (high to low)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 each side</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Cable set high, pull diagonally down across your body. Pivot your back foot. Control the return — don't let the cable pull you.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2021/11/forearm-plank.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Forearm plank">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Plank (forearm)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">20–40s hold</span><span class="badge">30s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Elbows under shoulders, squeeze glutes and core. Don't let hips sag or rise. Breathe steadily. Add 5 seconds per week.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <img class="ex-img" src="https://www.inspireusafoundation.org/wp-content/uploads/2022/01/captain-chair-knee-raise.gif" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Knee raises">
+      <div class="ex-img-placeholder" style="display:none">🏋️</div>
+      <div class="ex-body">
+        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Hanging knee raises (captain's chair)</span></div>
+        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–15 reps</span><span class="badge">45s rest</span></div>
+        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+        <div class="tip-text">Slow and controlled — don't swing. Bring knees to chest, lower slowly. The slow lower is where the work happens.</div>
+      </div>
+    </div>
+
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Full body stretch routine</div>
+  </div>
+
+  <!-- ===== SAT ===== -->
+  <div class="day-view" id="day-sat">
+    <div class="day-header">
+      <div class="day-tag">Cardio</div>
+      <div class="day-title">Cardio day</div>
+      <div class="day-muscles">Endurance · Fat burn · Active</div>
+      <div class="day-focus">Cardio accelerates fat loss without eating into muscle when kept moderate. 30–45 min is the sweet spot.</div>
+    </div>
+    <div class="section-label">Pick one — 30–45 min</div>
+    <div class="info-box">
+      <div class="cardio-item"><div class="cardio-name">🏃 Treadmill incline walk</div><div class="cardio-detail">30–40 min at 3.5–4mph, 8–12% incline. Low impact, high fat burn. Your existing walking habit — just steeper.</div></div>
+      <div class="cardio-item"><div class="cardio-name">🔄 Elliptical</div><div class="cardio-detail">30–40 min moderate pace. Easy on joints, full body. Good option if legs are sore from Thursday.</div></div>
+      <div class="cardio-item"><div class="cardio-name">🚴 Stationary bike</div><div class="cardio-detail">30 min steady, or 20 min intervals: 1 min hard / 2 min easy × 7. Intervals burn more in less time.</div></div>
+      <div class="cardio-item"><div class="cardio-name">🌳 Outdoor walk / jog</div><div class="cardio-detail">Your existing habit extended to 45–60 min. Add jogging intervals when you're ready.</div></div>
+    </div>
+  </div>
+
+  <!-- ===== SUN ===== -->
+  <div class="day-view" id="day-sun">
+    <div class="day-header">
+      <div class="day-tag">Rest</div>
+      <div class="day-title">Full rest</div>
+      <div class="day-muscles">Eat well · Sleep · Reset</div>
+      <div class="day-focus">You don't build muscle while training — you build it while resting. Earn this day.</div>
+    </div>
+    <div class="section-label">Today's goals</div>
+    <div class="info-box">
+      <ul class="rest-list">
+        <li><span class="rest-icon">🍳</span>Meal prep if possible — protein-first meals ready saves the whole week</li>
+        <li><span class="rest-icon">🚶</span>Light walk if you feel like it — never forced</li>
+        <li><span class="rest-icon">🌙</span>7–9 hours of sleep — this is part of the program</li>
+        <li><span class="rest-icon">💧</span>Hydrate: aim for 80–100oz of water today</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- WEEK BAR -->
+  <div class="week-bar">
+    <div class="section-label" style="margin-bottom:0">Weekly structure</div>
+    <div class="week-pills" id="week-pills">
+      <button class="week-pill active" onclick="showDay('mon',this)">Mon · Push</button>
+      <button class="week-pill" onclick="showDay('tue',this)">Tue · Pull</button>
+      <button class="week-pill" onclick="showDay('wed',this)">Wed · Rest</button>
+      <button class="week-pill" onclick="showDay('thu',this)">Thu · Legs</button>
+      <button class="week-pill" onclick="showDay('fri',this)">Fri · Full body</button>
+      <button class="week-pill" onclick="showDay('sat',this)">Sat · Cardio</button>
+      <button class="week-pill" onclick="showDay('sun',this)">Sun · Rest</button>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+  const days = ['mon','tue','wed','thu','fri','sat','sun'];
+
+  function showDay(id, triggerEl) {
+    days.forEach(d => {
+      document.getElementById('day-' + d).classList.remove('active');
+    });
+    document.getElementById('day-' + id).classList.add('active');
+
+    document.querySelectorAll('.day-pill').forEach((p, i) => {
+      p.classList.toggle('active', days[i] === id);
+    });
+    document.querySelectorAll('.week-pill').forEach((p, i) => {
+      p.classList.toggle('active', days[i] === id);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleTip(btn) {
+    const tip = btn.nextElementSibling;
+    const open = tip.classList.toggle('open');
+    btn.textContent = open ? '▼ Hide tip' : '▶ Form tip';
+  }
+
+  // Show install hint on iOS Safari
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone) {
+    document.getElementById('install-hint').classList.add('show');
+  }
+
+  // Auto-select today's day
+  const todayMap = [null,'mon','tue','wed','thu','fri','sat','sun'];
+  const todayId = todayMap[new Date().getDay()];
+  if (todayId) showDay(todayId);
+</script>
+
+</body>
+</html>
