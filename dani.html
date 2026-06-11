@@ -10,7 +10,6 @@
 <title>Workout</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #111111;
     --surface: #1c1c1e;
@@ -21,9 +20,6 @@
     --accent: #ff375f;
     --accent-bg: rgba(255,55,95,0.15);
     --accent-border: rgba(255,55,95,0.3);
-    --success: #30d158;
-    --warning: #ffd60a;
-    --danger: #ff453a;
     --ankle: rgba(255,214,10,0.15);
     --ankle-text: #ffd60a;
     --wrist: rgba(255,159,10,0.15);
@@ -31,349 +27,102 @@
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
-
+  *, body { -webkit-tap-highlight-color: transparent; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    overflow-x: hidden;
-    -webkit-tap-highlight-color: transparent;
+    background: var(--bg); color: var(--text);
+    min-height: 100dvh; overflow-x: hidden;
   }
-
   .app-header {
     background: var(--bg);
     padding: calc(var(--safe-top) + 16px) 20px 14px;
     border-bottom: 0.5px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .app-header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
   .app-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-  .app-subtitle { font-size: 13px; color: var(--muted); }
-
+  .app-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
   .health-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-  .health-chip {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+  .health-chip { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
   .chip-ankle { background: var(--ankle); color: var(--ankle-text); }
   .chip-wrist { background: var(--wrist); color: var(--wrist-text); }
-
   .day-pills {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin: 0 -20px;
-    padding: 0 20px;
+    display: flex; gap: 6px; overflow-x: auto;
+    scrollbar-width: none; margin: 0 -20px; padding: 0 20px;
   }
   .day-pills::-webkit-scrollbar { display: none; }
   .day-pill {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 0.5px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    font-family: inherit;
+    flex-shrink: 0; padding: 6px 14px; border-radius: 999px;
+    border: 0.5px solid var(--border); background: var(--surface);
+    color: var(--muted); font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s;
   }
-  .day-pill.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-
-  .content {
-    padding: 20px 20px calc(var(--safe-bottom) + 20px);
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
+  .day-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .content { padding: 20px 20px calc(var(--safe-bottom) + 20px); max-width: 680px; margin: 0 auto; }
   .day-view { display: none; }
   .day-view.active { display: block; }
-
-  .day-header {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-  .day-tag {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 4px;
-  }
+  .day-header { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+  .day-tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
   .day-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
   .day-muscles { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
   .day-focus { font-size: 14px; color: var(--text); line-height: 1.5; }
-
-  .info-box {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.5;
-  }
+  .info-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: var(--text); line-height: 1.5; }
   .info-box strong { color: var(--accent); }
-
-  .section-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  /* CAVEAT CHIPS on exercise cards */
-  .caveat-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 999px;
-    margin-bottom: 6px;
-  }
+  .section-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .caveat-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; margin-bottom: 6px; }
   .caveat-ankle { background: var(--ankle); color: var(--ankle-text); }
   .caveat-wrist { background: var(--wrist); color: var(--wrist-text); }
-
-  .ex-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    padding: 14px 16px;
-  }
-  .ex-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
+  .ex-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 10px; padding: 14px 16px; }
+  .ex-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
   .ex-name-row { display: flex; align-items: center; margin-bottom: 8px; }
   .ex-name { font-size: 15px; font-weight: 600; }
   .ex-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-  .badge {
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-    border: 0.5px solid var(--border);
-  }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--surface2); color: var(--muted); border: 0.5px solid var(--border); }
   .badge.accent { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
-
-  .demo-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0 6px;
-    text-decoration: none;
-    border-bottom: 0.5px solid var(--border);
-    margin-bottom: 8px;
-  }
-  .demo-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(255,59,48,0.15); flex-shrink: 0;
-  }
+  .demo-link { display: flex; align-items: center; gap: 8px; padding: 8px 0 6px; text-decoration: none; border-bottom: 0.5px solid var(--border); margin-bottom: 8px; }
+  .demo-icon { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.15); flex-shrink: 0; }
   .demo-text { font-size: 13px; color: #ff3b30; font-weight: 500; }
-
-  .tip-toggle {
-    font-size: 12px;
-    color: var(--muted);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .tip-text {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 0.5px solid var(--border);
-    display: none;
-  }
+  .tip-toggle { font-size: 12px; color: var(--muted); background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; }
+  .tip-text { font-size: 13px; color: var(--muted); line-height: 1.6; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); display: none; }
   .tip-text.open { display: block; }
-
-  /* CARDIO BLOCK */
-  .cardio-block {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-  }
-  .cardio-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .cardio-detail { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .cardio-caveat {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 500;
-    padding: 2px 8px; border-radius: 999px;
-    background: var(--ankle); color: var(--ankle-text);
-    margin-top: 6px;
-  }
-
-  /* REST DAY */
+  .machine-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+  .machine-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .machine-icon { font-size: 22px; }
+  .machine-name { font-size: 15px; font-weight: 600; }
+  .machine-detail { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .machine-caveat { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: var(--ankle); color: var(--ankle-text); margin-top: 8px; }
   .rest-list { list-style: none; }
-  .rest-list li {
-    padding: 10px 0;
-    border-bottom: 0.5px solid var(--border);
-    font-size: 14px;
-    line-height: 1.5;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
+  .rest-list li { padding: 10px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
   .rest-list li:last-child { border-bottom: none; }
   .rest-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-
-  /* PT TAB */
-  .pt-section {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-  .pt-section-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .pt-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+  .pt-section-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
   .pt-section-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-  .pt-exercise {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 0.5px solid var(--border);
-  }
+  .pt-exercise { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
   .pt-exercise:last-child { border-bottom: none; }
-  .pt-num {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--surface2);
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .pt-num { width: 22px; height: 22px; border-radius: 50%; background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .pt-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
   .pt-detail { font-size: 12px; color: var(--muted); line-height: 1.5; }
-  .pt-link {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 12px; color: var(--accent);
-    text-decoration: none; margin-top: 10px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: var(--accent-bg);
-    border: 0.5px solid var(--accent-border);
-  }
-
-  /* WEEK BAR */
-  .week-bar {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-top: 20px;
-  }
+  .pt-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--accent); text-decoration: none; margin-top: 10px; padding: 6px 12px; border-radius: 999px; background: var(--accent-bg); border: 0.5px solid var(--accent-border); }
+  .week-bar { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-top: 20px; }
   .week-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .week-pill {
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-    border: 0.5px solid var(--border);
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .week-pill.active {
-    background: var(--accent-bg);
-    color: var(--accent);
-    border-color: transparent;
-  }
-
-  /* GROUND RULES */
-  .rules-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .rule-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 14px;
-    padding: 12px;
-  }
+  .week-pill { font-size: 11px; padding: 4px 10px; border-radius: 999px; background: var(--surface2); color: var(--muted); border: 0.5px solid var(--border); cursor: pointer; font-family: inherit; }
+  .week-pill.active { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .rule-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 12px; }
   .rule-icon { font-size: 20px; margin-bottom: 6px; }
   .rule-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
   .rule-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-  .install-banner {
-    background: var(--accent-bg);
-    border: 0.5px solid var(--accent-border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-    display: none;
-  }
+  .install-banner { background: var(--accent-bg); border: 0.5px solid var(--accent-border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; font-size: 13px; line-height: 1.6; color: var(--text); display: none; }
   .install-banner.show { display: block; }
   .install-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  .sync-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(48,209,88,0.12); color: #30d158; border: 0.5px solid rgba(48,209,88,0.25); margin-bottom: 12px; }
 </style>
 </head>
 <body>
 
 <div class="app-header">
-  <div class="app-header-top">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
     <div>
       <div class="app-title">Workout 🌸</div>
       <div class="app-subtitle">Gym plan · Ankle &amp; wrist aware</div>
@@ -399,348 +148,318 @@
 
   <!-- ===== MON — Lower Body ===== -->
   <div class="day-view active" id="day-mon">
-
     <div class="install-banner" id="install-hint">
       <div class="install-title">📲 Add to Home Screen</div>
       Tap the <strong>Share</strong> button in Safari, then <strong>"Add to Home Screen"</strong> to install this as an app.
     </div>
-
+    <div class="sync-badge">🔄 Synced — he trains upper body today</div>
     <div class="day-header">
       <div class="day-tag">Lower body · Glute &amp; thigh focus</div>
       <div class="day-title">Monday</div>
       <div class="day-muscles">Glutes · Quads · Hamstrings · Core</div>
-      <div class="day-focus">All machine-based — no free-standing balance required. Finish with ankle PT.</div>
+      <div class="day-focus">All machine-based lower body. No standing balance required. Finish with ankle PT.</div>
+    </div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike — easy resistance, just warming the legs up. No ankle stress.</div>
+
+    <div class="section-label">🚴 Warmup machine</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🚴</span><span class="machine-name">Seated stationary bike</span></div>
+      <div class="ex-meta"><span class="badge accent">10 min</span><span class="badge">Easy resistance</span><span class="badge">Warmup pace</span></div>
+      <div class="machine-detail">Seat height: when your foot is at the bottom of the pedal stroke, your knee should have a slight bend — not fully locked. Resistance low enough that you can hold a conversation. This is warmup, not cardio — save the effort for the weights.</div>
     </div>
 
-    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike at easy pace — low impact, warms the legs without stressing the ankle</div>
     <div class="section-label">Exercises</div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Leg press</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+press+machine+form+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+press+machine+form+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Feet shoulder width, mid-platform. Don't lock knees at the top. Keep the weight moderate — this is the foundation of your leg work.</div>
+      <div class="tip-text">Feet shoulder width, mid-platform. Don't lock knees at the top. Controlled all the way — don't let the weight crash down.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated hamstring curl</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+leg+curl+machine+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+leg+curl+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Curl all the way through, squeeze at full contraction. Slow on the return — 3 seconds down. Seated version is easier on the ankle than lying.</div>
+      <div class="tip-text">Curl all the way through, squeeze at full contraction. 3 seconds on the way back up. Seated version is easier on the ankle than lying curl.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Hip thrust (machine or bench)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+thrust+proper+form+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+thrust+proper+form+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Upper back on the bench, feet flat and shoulder width. Drive hips up and squeeze glutes hard at the top — hold 1 second. Keep chin tucked. Best glute exercise there is.</div>
+      <div class="tip-text">Upper back on bench, feet flat and shoulder width. Drive hips up and squeeze glutes hard at the top — hold 1 second. Keep chin tucked. The best glute exercise there is.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Hip abduction machine</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Push outward against the pads. Slow and controlled — feel the outer glute squeeze. Don't just throw legs out.</div>
+      <div class="tip-text">Push outward against the pads slowly. Feel the outer glute squeeze. Don't just throw legs out — controlled movement both ways.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Reverse crunch</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=reverse+crunch+proper+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=reverse+crunch+proper+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Lie on a bench or mat. Pull knees toward chest using your core, not momentum. Lower slowly. No wrist load at all — good for carpal tunnel.</div>
+      <div class="tip-text">Lie on a bench or mat. Pull knees toward chest using your core, not momentum. Lower slowly. No wrist load — good for carpal tunnel.</div>
     </div>
 
-    <div class="info-box">❄️ <strong>Cooldown:</strong> Quad stretch 30s each · Seated hamstring stretch 45s · <strong>Then: Ankle PT routine</strong></div>
+    <div class="info-box">❄️ <strong>Cooldown:</strong> Quad stretch 30s each · Seated hamstring stretch 45s · <strong>Then: Ankle PT (see PT tab)</strong></div>
   </div>
 
-  <!-- ===== TUE — Recovery ===== -->
+  <!-- ===== TUE — Upper Body ===== -->
   <div class="day-view" id="day-tue">
-    <div class="day-header">
-      <div class="day-tag">Recovery</div>
-      <div class="day-title">Tuesday</div>
-      <div class="day-muscles">Walk · PT · Stretch</div>
-      <div class="day-focus">Active recovery and PT. Keep everything moving without loading the joints.</div>
-    </div>
-    <div class="section-label">Today's goals</div>
-    <div class="info-box">
-      <ul class="rest-list">
-        <li><span class="rest-icon">🚶</span>20–30 min easy walk — flat surface, comfortable pace only</li>
-        <li><span class="rest-icon">🦶</span>Ankle PT routine (see PT tab)</li>
-        <li><span class="rest-icon">🖐️</span>Wrist PT routine (see PT tab)</li>
-        <li><span class="rest-icon">🧘</span>15 min full body stretch — focus on hips, hamstrings, calves</li>
-        <li><span class="rest-icon">😴</span>Prioritize sleep — 7–9 hours is when muscles actually repair</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- ===== WED — Upper Body + Core ===== -->
-  <div class="day-view" id="day-wed">
+    <div class="sync-badge">🔄 Synced — he trains upper body today too</div>
     <div class="day-header">
       <div class="day-tag">Upper body + core</div>
-      <div class="day-title">Wednesday</div>
+      <div class="day-title">Tuesday</div>
       <div class="day-muscles">Chest · Back · Shoulders · Core</div>
-      <div class="day-focus">All machine and cable work — wrist stays in neutral position throughout. Finish with wrist PT.</div>
+      <div class="day-focus">Machine and cable upper body. Wrist-aware throughout — neutral grips where possible. Finish with wrist PT.</div>
     </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike · 10 arm circles · 10 shoulder rolls</div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike easy · 10 arm circles · 10 shoulder rolls</div>
+
+    <div class="section-label">🚴 Warmup machine</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🚴</span><span class="machine-name">Seated stationary bike</span></div>
+      <div class="ex-meta"><span class="badge accent">10 min</span><span class="badge">Easy resistance</span><span class="badge">Warmup pace</span></div>
+      <div class="machine-detail">Same setup as Monday. Easy pace, light resistance. Gets blood flowing to the whole body before upper work. Hands rest lightly on the bars — don't grip tight if wrists are sensitive.</div>
+    </div>
+
     <div class="section-label">Exercises</div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Use neutral grip — keep wrist straight</div>
+      <div class="caveat-chip caveat-wrist">🖐️ Neutral grip handles if available</div>
       <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Chest press machine</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=machine+chest+press+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=machine+chest+press+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Handles at mid-chest height. Press straight out. Choose a machine with neutral (palms-facing) handles if available — much easier on the wrists than a pronated grip.</div>
+      <div class="tip-text">Handles at mid-chest. Press straight out. Pick the machine with neutral (palms-facing) handles if your gym has one — much kinder to the wrists than a pronated grip.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated cable row</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Sit tall, pull handle to belly button. Squeeze shoulder blades at the end. Use a neutral grip V-bar attachment — keeps wrists in a safe position.</div>
+      <div class="tip-text">Use the V-bar attachment (neutral grip). Sit tall, pull to belly button, squeeze shoulder blades together at the end. Don't round your back on the return.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Lat pulldown</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Pull bar to upper chest, lean back slightly. Think about pulling your elbows down to your hips — not pulling with your arms. Use a wider grip only if wrists feel comfortable.</div>
+      <div class="tip-text">Pull bar to upper chest, lean back slightly. Think elbows down to your hips — not pulling with your arms. Use a comfortable grip width that doesn't stress the wrists.</div>
     </div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Light weight — wrist extension under load</div>
+      <div class="caveat-chip caveat-wrist">🖐️ Very light weight — keep wrist flat</div>
       <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Lateral raise (dumbbells)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+lateral+raise+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+lateral+raise+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Go very light here. Lead with your elbows, raise only to shoulder height. Keep the wrist flat and relaxed — don't let the dumbbell bend your wrist back. Stop if wrists ache.</div>
+      <div class="tip-text">Go very light. Lead with elbows, raise only to shoulder height. Keep the wrist flat and relaxed — don't let the dumbbell bend it back. Stop if wrists ache.</div>
     </div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Cable tension — keep wrists neutral throughout</div>
+      <div class="caveat-chip caveat-wrist">🖐️ Wrists neutral throughout</div>
       <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Pallof press (cable)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=pallof+press+form+tutorial+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=pallof+press+form+tutorial+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Stand side-on to the cable, hold the handle at chest. Press straight out, hold 2 seconds, return. Your core is resisting rotation — don't let the cable pull you. Great anti-rotation core work with minimal wrist stress.</div>
+      <div class="tip-text">Stand side-on to the cable, hold handle at chest. Press straight out, hold 2 seconds, return. Your core resists the rotation — don't let the cable pull you. Great anti-rotation core work.</div>
     </div>
 
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Cross-body shoulder stretch · <strong>Then: Wrist PT routine</strong></div>
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Shoulder stretch · <strong>Then: Wrist PT (see PT tab)</strong></div>
   </div>
 
-  <!-- ===== THU — Full Rest ===== -->
-  <div class="day-view" id="day-thu">
+  <!-- ===== WED — Rest ===== -->
+  <div class="day-view" id="day-wed">
+    <div class="sync-badge">🔄 Synced — rest day for both</div>
     <div class="day-header">
       <div class="day-tag">Rest</div>
-      <div class="day-title">Thursday</div>
-      <div class="day-muscles">No gym · Full recovery</div>
-      <div class="day-focus">Complete rest. Your body builds and repairs today — don't skip this.</div>
+      <div class="day-title">Wednesday</div>
+      <div class="day-muscles">No gym · Recover</div>
+      <div class="day-focus">Full rest day. Your muscles, ankle, and wrist all repair today. Keep PT going.</div>
     </div>
     <div class="section-label">Today's goals</div>
     <div class="info-box">
       <ul class="rest-list">
-        <li><span class="rest-icon">🍳</span>Protein-focused meals — keep hitting your daily target</li>
-        <li><span class="rest-icon">💧</span>Hydrate well — 80–100oz of water</li>
-        <li><span class="rest-icon">🌙</span>7–9 hours of sleep — non-negotiable</li>
-        <li><span class="rest-icon">🧘</span>Light stretch if anything feels tight — never forced</li>
+        <li><span class="rest-icon">🚶</span>20–30 min easy walk on flat ground — comfortable pace only</li>
+        <li><span class="rest-icon">🦶</span>Ankle PT routine (see PT tab)</li>
+        <li><span class="rest-icon">🖐️</span>Wrist PT routine (see PT tab)</li>
+        <li><span class="rest-icon">🧘</span>15 min full body stretch — hips, hamstrings, calves</li>
+        <li><span class="rest-icon">😴</span>7–9 hours sleep — joints and muscles both repair overnight</li>
       </ul>
     </div>
   </div>
 
-  <!-- ===== FRI — Lower Body Glute Bias ===== -->
-  <div class="day-view" id="day-fri">
+  <!-- ===== THU — Lower Body Glute Bias ===== -->
+  <div class="day-view" id="day-thu">
+    <div class="sync-badge">🔄 Synced — he trains legs today too</div>
     <div class="day-header">
       <div class="day-tag">Lower body · Glute bias</div>
-      <div class="day-title">Friday</div>
+      <div class="day-title">Thursday</div>
       <div class="day-muscles">Glutes · Hamstrings · Core</div>
-      <div class="day-focus">Glute-focused day. Hip thrusts are the priority — everything else supports them.</div>
+      <div class="day-focus">Glute-heavy day. Hip thrusts are the main event — everything else supports them. Finish with ankle PT.</div>
     </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike · 10 glute bridges bodyweight · Hip circles</div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike · 10 bodyweight glute bridges · Hip circles</div>
+
+    <div class="section-label">🚴 Warmup machine</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🚴</span><span class="machine-name">Seated stationary bike</span></div>
+      <div class="ex-meta"><span class="badge accent">10 min</span><span class="badge">Easy resistance</span><span class="badge">Warmup pace</span></div>
+      <div class="machine-detail">Light warmup to get glutes and hamstrings activated before the heavier work. Try to increase resistance slightly compared to Monday and Tuesday — your legs are more conditioned now mid-week.</div>
+    </div>
+
     <div class="section-label">Exercises</div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Hip thrust (machine or bench)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+thrust+proper+form+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+thrust+proper+form+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">4 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">4 sets today — this is the main event. Same form as Monday. Try to add a little weight or an extra rep from Monday's session. Squeeze and hold at the top every rep.</div>
+      <div class="tip-text">4 sets today — this is the priority. Try to add a small amount of weight or an extra rep from Monday. Squeeze and hold at the top every single rep.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Leg press (feet higher on platform)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+press+high+foot+placement+glutes" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+press+high+foot+placement+glutes" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Place feet slightly higher on the platform than Monday — shifts emphasis from quads to glutes and hamstrings. Same controlled movement, full range.</div>
+      <div class="tip-text">Feet placed slightly higher on the platform than Monday — shifts emphasis to glutes and hamstrings rather than quads. Same controlled movement, full range.</div>
     </div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-ankle">⚠️ Ankle — only if feeling good today</div>
+      <div class="caveat-chip caveat-ankle">⚠️ Ankle — skip if any pain today</div>
       <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Romanian deadlift (dumbbells)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–10 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Skip this if the ankle is bothering you — no shame, swap in an extra set of hip thrusts instead. If doing it: hinge at hips, soft knees, flat back. Feel the hamstring stretch. Dumbbells close to legs.</div>
+      <div class="tip-text">Skip if ankle is sore — swap in an extra set of hip thrusts instead. If doing it: hinge at hips, soft knees, flat back. Feel the hamstring stretch. Dumbbells stay close to your legs.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Hip abduction machine</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Slightly more weight than Monday if it felt easy. Outer glute squeeze at the top of each rep. Slow return.</div>
+      <div class="tip-text">Try slightly more weight than Monday if that felt manageable. Outer glute squeeze at the top. Slow controlled return every rep.</div>
     </div>
 
     <div class="ex-card">
       <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Cable crunch</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+crunch+proper+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+crunch+proper+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Kneel facing the cable machine, rope attachment at the top. Hold rope at sides of your head and crunch your elbows toward your knees. The weight comes from the cable — keep wrists neutral and relaxed.</div>
+      <div class="tip-text">Kneel facing cable machine, rope at the top. Hold rope at sides of head and crunch elbows toward knees. Cable provides the resistance — keep wrists neutral and relaxed throughout.</div>
     </div>
 
-    <div class="info-box">❄️ <strong>Cooldown:</strong> Glute stretch 45s each · Hamstring stretch · <strong>Then: Ankle PT routine</strong></div>
+    <div class="info-box">❄️ <strong>Cooldown:</strong> Glute stretch 45s each · Hamstring stretch · <strong>Then: Ankle PT (see PT tab)</strong></div>
   </div>
 
-  <!-- ===== SAT — Upper Body + Cardio ===== -->
-  <div class="day-view" id="day-sat">
+  <!-- ===== FRI — Upper Body + Core ===== -->
+  <div class="day-view" id="day-fri">
+    <div class="sync-badge">🔄 Synced — he trains full body today</div>
     <div class="day-header">
-      <div class="day-tag">Upper body + cardio</div>
-      <div class="day-title">Saturday</div>
-      <div class="day-muscles">Chest · Back · Lats · Arms · Cardio</div>
-      <div class="day-focus">Upper body strength followed by cardio. Bike is always the safe pick — stair master on good ankle days only.</div>
+      <div class="day-tag">Upper body + core</div>
+      <div class="day-title">Friday</div>
+      <div class="day-muscles">Back · Lats · Arms · Core</div>
+      <div class="day-focus">Second upper body day — try to beat Tuesday's weights or reps on each exercise. Finish with wrist PT.</div>
     </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min seated bike easy · Arm circles · Shoulder rolls</div>
+    <div class="info-box">🔥 <strong>Warmup:</strong> 10 min seated bike · Arm swings · Shoulder rolls</div>
+
+    <div class="section-label">🚴 Warmup machine</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🚴</span><span class="machine-name">Seated stationary bike</span></div>
+      <div class="ex-meta"><span class="badge accent">10 min</span><span class="badge">Easy–moderate</span><span class="badge">Warmup pace</span></div>
+      <div class="machine-detail">By Friday your body is familiar with the bike. Push the resistance up one notch from your Tuesday warmup — still conversational pace, just slightly more effort. Good active warmup before the upper work.</div>
+    </div>
+
     <div class="section-label">Exercises</div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Neutral grip if available</div>
-      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Chest press machine</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=machine+chest+press+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Seated cable row</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Try to beat Wednesday's weight or reps. Same form — handles at mid-chest, press straight out, controlled return.</div>
+      <div class="tip-text">V-bar neutral grip. Pull to belly button, squeeze shoulder blades. Try to match or beat Tuesday's weight today.</div>
     </div>
 
     <div class="ex-card">
-      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated cable row</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Lat pulldown</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">V-bar attachment for neutral wrist. Sit tall, pull to belly button, squeeze shoulder blades. Match or beat Wednesday.</div>
+      <div class="tip-text">Same as Tuesday. Pull elbows down to your hips, lean back slightly. Slow on the return — 3 seconds back up builds the back width over time.</div>
     </div>
 
     <div class="ex-card">
-      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Lat pulldown</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
-      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">8–12 reps</span><span class="badge">60s rest</span></div>
-      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Pull bar to upper chest, elbows down to hips. Slow on the return. Build your back width over time — this is a key one.</div>
-    </div>
-
-    <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Use machine version — reduces wrist load</div>
-      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Bicep curl machine</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=bicep+curl+machine+form+tutorial" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <div class="caveat-chip caveat-wrist">🖐️ Machine version — fixed wrist position</div>
+      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Bicep curl machine</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=bicep+curl+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Machine version keeps the wrist in a fixed position — much better for carpal tunnel than free dumbbells. Full range of motion, slow on the way down.</div>
+      <div class="tip-text">Machine keeps wrists in a fixed safe position — much better for carpal tunnel than free dumbbells. Full range of motion, slow on the way down.</div>
     </div>
 
     <div class="ex-card">
-      <div class="caveat-chip caveat-wrist">🖐️ Keep elbows in, wrists straight</div>
-      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Tricep pushdown (cable, rope)</span></div>
-      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+rope+tricep+pushdown+form" target="_blank">
-        <div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div>
-        <span class="demo-text">Watch form demo on YouTube ↗</span>
-      </a>
+      <div class="caveat-chip caveat-wrist">🖐️ Rope attachment — keeps wrists neutral</div>
+      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Tricep pushdown (cable, rope)</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+rope+tricep+pushdown+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
       <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
       <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-      <div class="tip-text">Elbows glued to sides. Push down and flare rope at the bottom. Rope attachment keeps wrists in a more neutral position than a straight bar — always use rope.</div>
+      <div class="tip-text">Always use the rope attachment — it lets wrists rotate naturally rather than forcing a fixed position. Elbows glued to sides. Push down and flare the rope apart at the bottom.</div>
     </div>
 
-    <div class="section-label" style="margin-top:20px">Cardio — pick one</div>
-
-    <div class="cardio-block">
-      <div class="cardio-title">🚴 Seated bike</div>
-      <div class="cardio-detail">15–20 min at a comfortable resistance. Always safe on the ankle. Increase resistance over weeks instead of speed to keep building fitness.</div>
+    <div class="ex-card">
+      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Reverse crunch</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=reverse+crunch+proper+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo on YouTube ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Lie on bench or mat. Pull knees to chest using core only, not momentum. Lower slowly. Zero wrist load — safe for carpal tunnel.</div>
     </div>
 
-    <div class="cardio-block">
-      <div class="cardio-title">🪜 Stair master</div>
-      <div class="cardio-detail">15–20 min at a slow, controlled pace. Great for glutes and cardio. Keep hands lightly on the rails for balance — don't lean on them.</div>
-      <div class="cardio-caveat">⚠️ Ankle — good days only. Skip if any pain or swelling.</div>
-    </div>
-
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min easy bike · Chest and shoulder stretch · <strong>Then: Wrist PT routine</strong></div>
+    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Full stretch · <strong>Then: Wrist PT (see PT tab)</strong></div>
   </div>
 
-  <!-- ===== SUN — Full Rest ===== -->
+  <!-- ===== SAT — Cardio ===== -->
+  <div class="day-view" id="day-sat">
+    <div class="sync-badge">🔄 Synced — cardio day for both</div>
+    <div class="day-header">
+      <div class="day-tag">Cardio</div>
+      <div class="day-title">Saturday</div>
+      <div class="day-muscles">Endurance · Fat burn · Active</div>
+      <div class="day-focus">Dedicated cardio day. Bike is always safe. Stair master on good ankle days only — never push through ankle pain.</div>
+    </div>
+
+    <div class="section-label">🚴 Option 1 — Seated bike (always safe)</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🚴</span><span class="machine-name">Seated stationary bike</span></div>
+      <div class="ex-meta"><span class="badge accent">30–40 min</span><span class="badge">Moderate resistance</span><span class="badge">Steady pace</span></div>
+      <div class="machine-detail">Seat height: knee slightly bent at the bottom of the stroke. Resistance should feel like a brisk effort — you can still talk but wouldn't want to hold a full conversation. This is actual cardio effort, not warmup pace. Build duration and resistance week by week.<br><br><strong>Interval option:</strong> 2 min easy / 1 min hard × 10 rounds = 30 min. Burns more calories and keeps it mentally engaging.</div>
+    </div>
+
+    <div class="section-label">🪜 Option 2 — Stair master (good ankle days only)</div>
+    <div class="machine-card">
+      <div class="machine-header"><span class="machine-icon">🪜</span><span class="machine-name">Stair master</span></div>
+      <div class="ex-meta"><span class="badge accent">20–30 min</span><span class="badge">Slow controlled pace</span></div>
+      <div class="machine-detail">Step onto the machine, set speed low (level 4–6 to start). Step through the full motion — don't skip steps or bounce. Hands rest lightly on the side rails for balance, not for leaning your weight on them — that cheats the workout and stresses the wrists.<br><br>Great for glutes and cardio at the same time. The slow pace isn't weakness — it protects the ankle and still burns significantly.</div>
+      <div class="machine-caveat">⚠️ Ankle — good days only. Any pain = bike instead, no exceptions.</div>
+    </div>
+
+    <div class="info-box" style="margin-top:14px">💡 <strong>Which to pick:</strong> If ankle is good, do 20 min stair master then 15 min bike. If ankle is off, do the full 35–40 min on the bike. Either way you hit the cardio goal.</div>
+  </div>
+
+  <!-- ===== SUN — Rest ===== -->
   <div class="day-view" id="day-sun">
+    <div class="sync-badge">🔄 Synced — rest day for both</div>
     <div class="day-header">
       <div class="day-tag">Rest</div>
       <div class="day-title">Sunday</div>
@@ -752,8 +471,8 @@
       <ul class="rest-list">
         <li><span class="rest-icon">🍳</span>Meal prep if possible — protein-first meals ready for the week</li>
         <li><span class="rest-icon">🚶</span>Light walk only if you feel like it — never forced</li>
-        <li><span class="rest-icon">🌙</span>7–9 hours sleep — this is part of the program</li>
-        <li><span class="rest-icon">💧</span>Hydrate — 80–100oz of water today</li>
+        <li><span class="rest-icon">🌙</span>7–9 hours sleep — joints and muscles both repair overnight</li>
+        <li><span class="rest-icon">💧</span>80–100oz of water today</li>
       </ul>
     </div>
   </div>
@@ -764,100 +483,36 @@
       <div class="day-tag">Physical therapy · Daily</div>
       <div class="day-title">PT Routines</div>
       <div class="day-muscles">Wrist · Ankle · Every day</div>
-      <div class="day-focus">These take 10–15 min total. Do them daily — they protect your joints and are how you actually get better over time.</div>
+      <div class="day-focus">10–15 min total. Do these every day — they protect your joints and are how you actually get better long term.</div>
     </div>
 
-    <!-- WRIST PT -->
     <div class="pt-section">
-      <div class="pt-section-title">
-        <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--wrist);">🖐️</span>
-        Wrist PT
-      </div>
+      <div class="pt-section-title"><span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--wrist);">🖐️</span>Wrist PT</div>
       <div class="pt-section-sub">Daily · 5 minutes · Carpal tunnel management</div>
-
-      <div class="pt-exercise">
-        <div class="pt-num">1</div>
-        <div>
-          <div class="pt-name">Tendon glides</div>
-          <div class="pt-detail">Start with hand open, fingers straight. Curl fingers into a hook fist, then a full fist, then a flat fist (fingers bent at knuckle, tips touching palm). Hold each position 3 seconds. × 10 reps.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">2</div>
-        <div>
-          <div class="pt-name">Median nerve glides</div>
-          <div class="pt-detail">Extend arm out, wrist bent back (like a stop signal), fingers spread. Hold 5 seconds. Then tilt your head away from the hand for extra nerve stretch. × 10 reps each hand.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">3</div>
-        <div>
-          <div class="pt-name">Wrist flexor stretch</div>
-          <div class="pt-detail">Extend arm, palm facing up. Use other hand to gently pull fingers back toward you. Hold 30 seconds each hand. Should feel a stretch along the inside of your forearm.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">4</div>
-        <div>
-          <div class="pt-name">Wrist extensor stretch</div>
-          <div class="pt-detail">Extend arm, palm facing down. Use other hand to gently bend your hand downward. Hold 30 seconds each hand. Stretches the top of the forearm — important for typing and lifting.</div>
-        </div>
-      </div>
-      <a class="pt-link" href="https://orthoinfo.aaos.org/en/recovery/carpal-tunnel-syndrome-exercises/" target="_blank">📋 Full AAOS visual guide ↗</a>
+      <div class="pt-exercise"><div class="pt-num">1</div><div><div class="pt-name">Tendon glides</div><div class="pt-detail">Hand open and flat. Curl into a hook fist, then full fist, then flat fist (fingertips touch palm). Hold each 3 seconds. × 10 reps each hand.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">2</div><div><div class="pt-name">Median nerve glides</div><div class="pt-detail">Arm out, wrist bent back like a stop signal, fingers spread. Hold 5 seconds. Tilt head away from the hand for an extra stretch. × 10 reps each hand.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">3</div><div><div class="pt-name">Wrist flexor stretch</div><div class="pt-detail">Arm out palm up, use other hand to gently pull fingers back toward you. Hold 30 seconds each hand. Stretch along the inside of the forearm.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">4</div><div><div class="pt-name">Wrist extensor stretch</div><div class="pt-detail">Arm out palm down, use other hand to gently bend hand downward. Hold 30 seconds each hand. Stretches the top of the forearm — important for typing and lifting.</div></div></div>
+      <a class="pt-link" href="https://orthoinfo.aaos.org/en/recovery/carpal-tunnel-syndrome-exercises/" target="_blank">📋 AAOS visual guide ↗</a>
     </div>
 
-    <!-- ANKLE PT -->
     <div class="pt-section">
-      <div class="pt-section-title">
-        <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--ankle);">🦶</span>
-        Ankle PT
-      </div>
-      <div class="pt-section-sub">Daily · 5–10 minutes · Strength &amp; mobility recovery</div>
-
-      <div class="pt-exercise">
-        <div class="pt-num">1</div>
-        <div>
-          <div class="pt-name">Ankle alphabet</div>
-          <div class="pt-detail">Seated, lift one foot slightly. Use your big toe to draw every letter of the alphabet in the air. Full range of motion. Both feet. Builds mobility in all directions.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">2</div>
-        <div>
-          <div class="pt-name">Ankle circles</div>
-          <div class="pt-detail">Slow, full circles — 10 clockwise, 10 counterclockwise. Both ankles. Move through the full range without pain. If it grinds or clicks, go slower.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">3</div>
-        <div>
-          <div class="pt-name">Heel raises</div>
-          <div class="pt-detail">Standing at a wall for support, raise up onto toes, lower slowly. × 15–20 reps. Build calf strength which protects the ankle. Add single-leg over time.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">4</div>
-        <div>
-          <div class="pt-name">Toe raises</div>
-          <div class="pt-detail">Standing, lift toes off the ground while heels stay down. Hold 2 seconds, lower. × 15 reps. Strengthens the shin muscles which stabilize the ankle.</div>
-        </div>
-      </div>
-      <div class="pt-exercise">
-        <div class="pt-num">5</div>
-        <div>
-          <div class="pt-name">Single-leg balance</div>
-          <div class="pt-detail">Stand on one foot, hold for 20–30 seconds. Use a wall nearby for safety. Build up over weeks. This is one of the best things you can do for ankle stability long-term.</div>
-        </div>
-      </div>
+      <div class="pt-section-title"><span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--ankle);">🦶</span>Ankle PT</div>
+      <div class="pt-section-sub">Daily · 5–10 minutes · Strength &amp; mobility</div>
+      <div class="pt-exercise"><div class="pt-num">1</div><div><div class="pt-name">Ankle alphabet</div><div class="pt-detail">Seated, lift one foot slightly. Draw every letter of the alphabet with your big toe. Full range of motion. Both feet. Builds mobility in all directions.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">2</div><div><div class="pt-name">Ankle circles</div><div class="pt-detail">10 slow circles clockwise, 10 counterclockwise. Both ankles. Full range — if it grinds or clicks, slow down further.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">3</div><div><div class="pt-name">Heel raises</div><div class="pt-detail">Standing at a wall for support. Rise up onto toes, lower slowly. × 15–20 reps. Builds calf strength which stabilizes the ankle. Progress to single-leg over time.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">4</div><div><div class="pt-name">Toe raises</div><div class="pt-detail">Standing, lift toes off the ground, heels stay down. Hold 2 seconds, lower. × 15 reps. Strengthens the shin — critical for ankle stability.</div></div></div>
+      <div class="pt-exercise"><div class="pt-num">5</div><div><div class="pt-name">Single-leg balance</div><div class="pt-detail">Stand on one foot, hold 20–30 seconds. Wall nearby for safety. One of the best long-term investments for ankle health. Build up over weeks.</div></div></div>
     </div>
 
     <div class="section-label">📋 Ground rules</div>
     <div class="rules-grid">
-      <div class="rule-card"><div class="rule-icon">🥩</div><div class="rule-title">Protein first</div><div class="rule-body">0.7–1g per lb of goal bodyweight daily. Eggs, chicken, Greek yogurt. Consistent protein = consistent progress.</div></div>
-      <div class="rule-card"><div class="rule-icon">⚠️</div><div class="rule-title">Listen to your body</div><div class="rule-body">Pain is different from discomfort. Muscle burn = good. Sharp joint pain = stop immediately.</div></div>
-      <div class="rule-card"><div class="rule-icon">😴</div><div class="rule-title">Sleep = growth</div><div class="rule-body">7–9 hours. Your ankle and wrist also recover during sleep. This isn't optional.</div></div>
-      <div class="rule-card"><div class="rule-icon">📈</div><div class="rule-title">Progressive overload</div><div class="rule-body">Add a rep or tiny bit of weight every 1–2 weeks. Slow progress is still progress.</div></div>
-      <div class="rule-card"><div class="rule-icon">🔁</div><div class="rule-title">Consistency wins</div><div class="rule-body">Missed a day? Pick right back up. Months of 80% effort beats one perfect week.</div></div>
+      <div class="rule-card"><div class="rule-icon">🥩</div><div class="rule-title">Protein first</div><div class="rule-body">0.7–1g per lb of goal bodyweight daily. Eggs, chicken, Greek yogurt. Consistent protein = consistent results.</div></div>
+      <div class="rule-card"><div class="rule-icon">⚠️</div><div class="rule-title">Pain vs discomfort</div><div class="rule-body">Muscle burn is good. Sharp joint pain means stop immediately — never push through ankle or wrist pain.</div></div>
+      <div class="rule-card"><div class="rule-icon">😴</div><div class="rule-title">Sleep = growth</div><div class="rule-body">7–9 hours. Ankle and wrist recover during sleep too. Non-negotiable.</div></div>
+      <div class="rule-card"><div class="rule-icon">📈</div><div class="rule-title">Progressive overload</div><div class="rule-body">Add a rep or small amount of weight every 1–2 weeks. Slow progress is still progress.</div></div>
+      <div class="rule-card"><div class="rule-icon">🔁</div><div class="rule-title">Consistency wins</div><div class="rule-body">Missed a day? Pick right back up. Months of 80% beats one perfect week every time.</div></div>
       <div class="rule-card"><div class="rule-icon">💧</div><div class="rule-title">Hydration</div><div class="rule-body">80–100oz daily. More on gym days. Dehydration worsens joint pain and nerve symptoms.</div></div>
     </div>
   </div>
@@ -865,13 +520,13 @@
   <!-- WEEK BAR -->
   <div class="week-bar">
     <div class="section-label" style="margin-bottom:0">Weekly structure</div>
-    <div class="week-pills" id="week-pills">
+    <div class="week-pills">
       <button class="week-pill active" onclick="showDay('mon',this)">Mon · Lower body</button>
-      <button class="week-pill" onclick="showDay('tue',this)">Tue · Recovery</button>
-      <button class="week-pill" onclick="showDay('wed',this)">Wed · Upper body</button>
-      <button class="week-pill" onclick="showDay('thu',this)">Thu · Rest</button>
-      <button class="week-pill" onclick="showDay('fri',this)">Fri · Glute day</button>
-      <button class="week-pill" onclick="showDay('sat',this)">Sat · Upper + cardio</button>
+      <button class="week-pill" onclick="showDay('tue',this)">Tue · Upper body</button>
+      <button class="week-pill" onclick="showDay('wed',this)">Wed · Rest</button>
+      <button class="week-pill" onclick="showDay('thu',this)">Thu · Glute day</button>
+      <button class="week-pill" onclick="showDay('fri',this)">Fri · Upper + core</button>
+      <button class="week-pill" onclick="showDay('sat',this)">Sat · Cardio</button>
       <button class="week-pill" onclick="showDay('sun',this)">Sun · Rest</button>
       <button class="week-pill" onclick="showDay('pt',this)">PT routines</button>
     </div>
@@ -881,31 +536,23 @@
 
 <script>
   const days = ['mon','tue','wed','thu','fri','sat','sun','pt'];
-
-  function showDay(id, triggerEl) {
+  function showDay(id) {
     days.forEach(d => document.getElementById('day-' + d).classList.remove('active'));
     document.getElementById('day-' + id).classList.add('active');
-    document.querySelectorAll('.day-pill').forEach((p, i) => p.classList.toggle('active', days[i] === id));
-    document.querySelectorAll('.week-pill').forEach((p, i) => p.classList.toggle('active', days[i] === id));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.day-pill').forEach((p,i) => p.classList.toggle('active', days[i]===id));
+    document.querySelectorAll('.week-pill').forEach((p,i) => p.classList.toggle('active', days[i]===id));
+    window.scrollTo({top:0,behavior:'smooth'});
   }
-
   function toggleTip(btn) {
     const tip = btn.nextElementSibling;
     const open = tip.classList.toggle('open');
     btn.textContent = open ? '▼ Hide tip' : '▶ Form tip';
   }
-
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone === true;
-  if (isIOS && !isStandalone) {
-    document.getElementById('install-hint').classList.add('show');
-  }
-
+  if (isIOS && !window.navigator.standalone) document.getElementById('install-hint').classList.add('show');
   const todayMap = [null,'mon','tue','wed','thu','fri','sat','sun'];
-  const todayId = todayMap[new Date().getDay()];
-  if (todayId) showDay(todayId);
+  const t = todayMap[new Date().getDay()];
+  if (t) showDay(t);
 </script>
-
 </body>
 </html>
