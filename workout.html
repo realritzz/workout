@@ -10,826 +10,837 @@
 <title>Recomp Plan</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #111111;
-    --surface: #1c1c1e;
-    --surface2: #2c2c2e;
-    --border: rgba(255,255,255,0.08);
-    --text: #f2f2f7;
-    --muted: #8e8e93;
-    --accent: #0a84ff;
-    --accent-bg: rgba(10,132,255,0.15);
-    --success: #30d158;
-    --warning: #ffd60a;
-    --danger: #ff453a;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #111111; --surface: #1c1c1e; --surface2: #2c2c2e;
+    --border: rgba(255,255,255,0.08); --text: #f2f2f7; --muted: #8e8e93;
+    --accent: #0a84ff; --accent-bg: rgba(10,132,255,0.15);
+    --success: #30d158; --warning: #ffd60a; --danger: #ff453a;
+    --optional: rgba(48,209,88,0.12); --optional-text: #30d158;
+    --safe-top: env(safe-area-inset-top,0px); --safe-bottom: env(safe-area-inset-bottom,0px);
   }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    overflow-x: hidden;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* HEADER */
-  .app-header {
-    background: var(--bg);
-    padding: calc(var(--safe-top) + 16px) 20px 16px;
-    border-bottom: 0.5px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .app-header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .app-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-  .app-subtitle { font-size: 13px; color: var(--muted); }
-  .header-stats { display: flex; gap: 20px; }
-  .stat { text-align: center; }
-  .stat-val { font-size: 17px; font-weight: 600; }
-  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-  /* DAY PILLS */
-  .day-pills {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 0 20px 0;
-    scrollbar-width: none;
-    margin: 0 -20px;
-    padding: 0 20px;
-  }
-  .day-pills::-webkit-scrollbar { display: none; }
-  .day-pill {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 0.5px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    font-family: inherit;
-  }
-  .day-pill.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-
-  /* CONTENT */
-  .content {
-    padding: 20px 20px calc(var(--safe-bottom) + 20px);
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .day-view { display: none; }
-  .day-view.active { display: block; }
-
-  /* DAY HEADER CARD */
-  .day-header {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-  .day-tag {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 4px;
-  }
-  .day-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
-  .day-muscles { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-  .day-focus { font-size: 14px; color: var(--text); line-height: 1.5; }
-
-  /* RPE BOX */
-  .rpe-box {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .rpe-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
-  .rpe-scale { display: flex; gap: 6px; margin-bottom: 8px; }
-  .rpe-zone {
-    flex: 1;
-    border-radius: 8px;
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-  .rpe-zone.easy { background: rgba(48,209,88,0.15); color: var(--success); }
-  .rpe-zone.work { background: rgba(255,214,10,0.15); color: var(--warning); }
-  .rpe-zone.hard { background: rgba(255,69,58,0.15); color: var(--danger); }
-  .rpe-note { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-  /* INFO BOX */
-  .info-box {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.5;
-  }
-  .info-box strong { color: var(--accent); }
-
-  /* SECTION LABEL */
-  .section-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  /* EXERCISE CARDS */
-  .ex-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .ex-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    display: block;
-    background: var(--surface2);
-  }
-  .ex-img-placeholder {
-    width: 100%;
-    height: 180px;
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-  }
-  .ex-body { padding: 12px 16px; }
-  .ex-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-  .ex-name-row { display: flex; align-items: center; margin-bottom: 8px; }
-  .ex-name { font-size: 15px; font-weight: 600; }
-  .ex-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-  .badge {
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-    border: 0.5px solid var(--border);
-  }
-  .badge.accent { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
-  .tip-toggle {
-    font-size: 12px;
-    color: var(--muted);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .tip-text {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 0.5px solid var(--border);
-    display: none;
-  }
-  .tip-text.open { display: block; }
-
+  body { font-family: -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif; background:var(--bg); color:var(--text); min-height:100dvh; overflow-x:hidden; -webkit-tap-highlight-color:transparent; }
+  .app-header { background:var(--bg); padding:calc(var(--safe-top) + 16px) 20px 14px; border-bottom:0.5px solid var(--border); position:sticky; top:0; z-index:100; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+  .app-title { font-size:22px; font-weight:700; letter-spacing:-0.5px; }
+  .app-subtitle { font-size:13px; color:var(--muted); margin-bottom:12px; }
+  .day-pills { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 -20px; padding:0 20px; }
+  .day-pills::-webkit-scrollbar { display:none; }
+  .day-pill { flex-shrink:0; padding:6px 14px; border-radius:999px; border:0.5px solid var(--border); background:var(--surface); color:var(--muted); font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; font-family:inherit; transition:all 0.15s; }
+  .day-pill.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .content { padding:20px 20px calc(var(--safe-bottom)+20px); max-width:680px; margin:0 auto; }
+  .day-view { display:none; }
+  .day-view.active { display:block; }
+  .day-header { background:var(--surface); border:0.5px solid var(--border); border-radius:16px; padding:16px; margin-bottom:14px; }
+  .day-tag { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+  .day-title { font-size:22px; font-weight:700; letter-spacing:-0.5px; margin-bottom:2px; }
+  .day-muscles { font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .day-focus { font-size:14px; color:var(--text); line-height:1.5; }
+  .info-box { background:var(--surface); border:0.5px solid var(--border); border-radius:12px; padding:12px 16px; margin-bottom:14px; font-size:13px; color:var(--text); line-height:1.5; }
+  .info-box strong { color:var(--accent); }
+  .section-label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .rpe-box { background:var(--surface); border:0.5px solid var(--border); border-radius:16px; padding:14px 16px; margin-bottom:14px; }
+  .rpe-title { font-size:13px; font-weight:600; margin-bottom:10px; }
+  .rpe-scale { display:flex; gap:6px; margin-bottom:8px; }
+  .rpe-zone { flex:1; border-radius:8px; padding:8px 4px; text-align:center; font-size:11px; font-weight:500; line-height:1.4; }
+  .rpe-zone.easy { background:rgba(48,209,88,0.15); color:var(--success); }
+  .rpe-zone.work { background:rgba(255,214,10,0.15); color:var(--warning); }
+  .rpe-zone.hard { background:rgba(255,69,58,0.15); color:var(--danger); }
+  .rpe-note { font-size:12px; color:var(--muted); line-height:1.5; }
+  /* EXERCISE CARD */
+  .ex-card { background:var(--surface); border:0.5px solid var(--border); border-radius:16px; margin-bottom:10px; overflow:hidden; }
+  .ex-card.optional { border-color:rgba(48,209,88,0.25); }
+  .optional-banner { background:var(--optional); padding:6px 16px; font-size:11px; font-weight:600; color:var(--optional-text); letter-spacing:0.05em; text-transform:uppercase; }
+  .ex-body { padding:14px 16px; }
+  .ex-name-row { display:flex; align-items:center; margin-bottom:8px; }
+  .ex-num { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:700; margin-right:8px; flex-shrink:0; }
+  .ex-num.opt { background:var(--success); }
+  .ex-name { font-size:15px; font-weight:600; }
+  .ex-muscle { font-size:11px; color:var(--muted); margin-left:auto; background:var(--surface2); padding:2px 8px; border-radius:999px; white-space:nowrap; }
+  .ex-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .badge { font-size:12px; padding:3px 10px; border-radius:999px; background:var(--surface2); color:var(--muted); border:0.5px solid var(--border); }
+  .badge.accent { background:var(--accent-bg); color:var(--accent); border-color:transparent; }
+  .demo-link { display:flex; align-items:center; gap:8px; padding:8px 0 6px; text-decoration:none; border-bottom:0.5px solid var(--border); margin-bottom:8px; }
+  .demo-icon { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,59,48,0.15); flex-shrink:0; }
+  .demo-text { font-size:13px; color:#ff3b30; font-weight:500; }
+  .tip-toggle { font-size:12px; color:var(--muted); background:none; border:none; padding:0; cursor:pointer; font-family:inherit; }
+  .tip-text { font-size:13px; color:var(--muted); line-height:1.6; margin-top:8px; padding-top:8px; border-top:0.5px solid var(--border); display:none; }
+  .tip-text.open { display:block; }
+  /* WEIGHT LOGGER */
+  .log-section { margin-top:10px; padding-top:10px; border-top:0.5px solid var(--border); }
+  .log-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+  .log-row { display:flex; gap:8px; align-items:center; }
+  .log-input { flex:0 0 90px; background:var(--surface2); border:0.5px solid var(--border); border-radius:8px; padding:7px 10px; font-size:14px; color:var(--text); font-family:inherit; outline:none; }
+  .log-input:focus { border-color:var(--accent); }
+  .log-notes { flex:1; background:var(--surface2); border:0.5px solid var(--border); border-radius:8px; padding:7px 10px; font-size:14px; color:var(--text); font-family:inherit; outline:none; }
+  .log-notes:focus { border-color:var(--accent); }
+  .log-save { background:var(--accent-bg); border:0.5px solid var(--accent); border-radius:8px; padding:7px 14px; font-size:13px; color:var(--accent); font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+  .log-saved { font-size:12px; color:var(--success); margin-top:5px; display:none; }
+  .log-history { margin-top:6px; font-size:12px; color:var(--muted); line-height:1.6; }
   /* REST / CARDIO */
-  .rest-list { list-style: none; }
-  .rest-list li {
-    padding: 10px 0;
-    border-bottom: 0.5px solid var(--border);
-    font-size: 14px;
-    line-height: 1.5;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  .rest-list li:last-child { border-bottom: none; }
-  .rest-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-
-  .cardio-item { padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-  .cardio-item:last-child { border-bottom: none; }
-  .cardio-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-  .cardio-detail { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
+  .rest-list { list-style:none; }
+  .rest-list li { padding:10px 0; border-bottom:0.5px solid var(--border); font-size:14px; line-height:1.5; display:flex; gap:10px; align-items:flex-start; }
+  .rest-list li:last-child { border-bottom:none; }
+  .rest-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+  .cardio-block { background:var(--surface); border:0.5px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:10px; }
+  .cardio-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+  .cardio-detail { font-size:13px; color:var(--muted); line-height:1.6; }
   /* WEEK BAR */
-  .week-bar {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-top: 20px;
-  }
-  .week-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .week-pill {
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-    border: 0.5px solid var(--border);
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .week-pill.active {
-    background: var(--accent-bg);
-    color: var(--accent);
-    border-color: transparent;
-  }
-
-  /* GROUND RULES */
-  .rules-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .rule-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 14px;
-    padding: 12px;
-  }
-  .rule-icon { font-size: 20px; margin-bottom: 6px; }
-  .rule-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .rule-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-  /* INSTALL BANNER */
-  .install-banner {
-    background: var(--accent-bg);
-    border: 0.5px solid rgba(10,132,255,0.3);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-    display: none;
-  }
-  .install-banner.show { display: block; }
-  .install-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  .week-bar { background:var(--surface); border:0.5px solid var(--border); border-radius:16px; padding:14px 16px; margin-top:20px; }
+  .week-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .week-pill { font-size:11px; padding:4px 10px; border-radius:999px; background:var(--surface2); color:var(--muted); border:0.5px solid var(--border); cursor:pointer; font-family:inherit; }
+  .week-pill.active { background:var(--accent-bg); color:var(--accent); border-color:transparent; }
+  /* RULES */
+  .rules-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .rule-card { background:var(--surface); border:0.5px solid var(--border); border-radius:14px; padding:12px; }
+  .rule-icon { font-size:20px; margin-bottom:6px; }
+  .rule-title { font-size:13px; font-weight:600; margin-bottom:4px; }
+  .rule-body { font-size:12px; color:var(--muted); line-height:1.5; }
+  .install-banner { background:var(--accent-bg); border:0.5px solid rgba(10,132,255,0.3); border-radius:14px; padding:14px 16px; margin-bottom:14px; font-size:13px; line-height:1.6; color:var(--text); display:none; }
+  .install-banner.show { display:block; }
+  .install-title { font-size:14px; font-weight:600; color:var(--accent); margin-bottom:4px; }
+  /* CLUSTER DIVIDER */
+  .cluster-label { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:16px 0 8px; padding-left:4px; border-left:2px solid var(--surface2); }
 </style>
 </head>
 <body>
 
 <div class="app-header">
-  <div class="app-header-top">
-    <div>
-      <div class="app-title">Recomp Plan 💪</div>
-      <div class="app-subtitle">Gym · Beginner · Build muscle · Burn fat</div>
-    </div>
-  </div>
+  <div class="app-title">Recomp Plan 💪</div>
+  <div class="app-subtitle">Gym · Beginner · Build muscle · Burn fat</div>
   <div class="day-pills">
-    <button class="day-pill active" onclick="showDay('mon',this)">Mon</button>
-    <button class="day-pill" onclick="showDay('tue',this)">Tue</button>
-    <button class="day-pill" onclick="showDay('wed',this)">Wed</button>
-    <button class="day-pill" onclick="showDay('thu',this)">Thu</button>
-    <button class="day-pill" onclick="showDay('fri',this)">Fri</button>
-    <button class="day-pill" onclick="showDay('sat',this)">Sat</button>
-    <button class="day-pill" onclick="showDay('sun',this)">Sun</button>
+    <button class="day-pill active" onclick="showDay('mon')">Mon</button>
+    <button class="day-pill" onclick="showDay('tue')">Tue</button>
+    <button class="day-pill" onclick="showDay('wed')">Wed</button>
+    <button class="day-pill" onclick="showDay('thu')">Thu</button>
+    <button class="day-pill" onclick="showDay('fri')">Fri</button>
+    <button class="day-pill" onclick="showDay('sat')">Sat</button>
+    <button class="day-pill" onclick="showDay('sun')">Sun</button>
   </div>
 </div>
 
 <div class="content">
 
-  <!-- ===== MON ===== -->
-  <div class="day-view active" id="day-mon">
-
-    <div class="install-banner" id="install-hint">
-      <div class="install-title">📲 Add to Home Screen</div>
-      Tap the <strong>Share</strong> button in Safari, then <strong>"Add to Home Screen"</strong> to install this as an app.
+<!-- ========== MON — PUSH ========== -->
+<div class="day-view active" id="day-mon">
+  <div class="install-banner" id="install-hint">
+    <div class="install-title">📲 Add to Home Screen</div>
+    Tap <strong>Share</strong> in Safari then <strong>"Add to Home Screen"</strong> to install as an app.
+  </div>
+  <div class="day-header">
+    <div class="day-tag">Upper body · Push</div>
+    <div class="day-title">Monday — Push Day</div>
+    <div class="day-muscles">Chest · Front Shoulders · Triceps</div>
+    <div class="day-focus">All pushing movements. Machines first, then cables, then dumbbells — stay in your zone and minimize walking.</div>
+  </div>
+  <div class="rpe-box">
+    <div class="rpe-title">🎯 Picking your weight</div>
+    <div class="rpe-scale">
+      <div class="rpe-zone easy">Too easy<br><span style="font-size:10px">add weight</span></div>
+      <div class="rpe-zone work">Working<br><span style="font-size:10px">target zone</span></div>
+      <div class="rpe-zone hard">Form breaks<br><span style="font-size:10px">reduce weight</span></div>
     </div>
+    <div class="rpe-note">Last 2–3 reps should feel hard but form stays clean. Log your weight below each exercise so you never have to guess next session.</div>
+  </div>
+  <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill walk · 10 arm circles each direction · 10 shoulder rolls</div>
 
-    <div class="day-header">
-      <div class="day-tag">Upper body · Push</div>
-      <div class="day-title">Push day</div>
-      <div class="day-muscles">Chest · Shoulders · Triceps</div>
-      <div class="day-focus">Pushing movements — chest, front shoulders, back of arms. All machine and cable based so form is guided for you.</div>
-    </div>
+  <div class="cluster-label">📍 Machines</div>
 
-    <div class="rpe-box">
-      <div class="rpe-title">🎯 How to pick your weight</div>
-      <div class="rpe-scale">
-        <div class="rpe-zone easy">Too easy<br><span style="font-size:10px">add weight</span></div>
-        <div class="rpe-zone work">Working<br><span style="font-size:10px">target zone</span></div>
-        <div class="rpe-zone hard">Form breaks<br><span style="font-size:10px">reduce weight</span></div>
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Machine chest press</span><span class="ex-muscle">Chest</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=machine+chest+press+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Handles at mid-chest. Push straight out, don't flare elbows too wide. If you can do 12 easily, go heavier next set.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-1')">
+          <input class="log-notes" type="text" placeholder="notes (e.g. felt easy)" oninput="autoSave(this,'mon-1-notes')">
+        </div>
+        <div class="log-history" id="log-mon-1"></div>
       </div>
-      <div class="rpe-note">Last 2–3 reps should feel hard but your form stays clean. That's your working weight. Write it down and add a little each week.</div>
-    </div>
-
-    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill walk · 10 arm circles each direction · 10 shoulder rolls</div>
-
-    <div class="section-label">Exercises</div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Machine chest press</span></div>
-<a href="https://www.youtube.com/results?search_query=machine+chest+press+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Seat height: handles at mid-chest. Push straight out, don't flare elbows too wide. If you can do 12 easily, go heavier next set.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated dumbbell shoulder press</span></div>
-<a href="https://www.youtube.com/results?search_query=seated+dumbbell+shoulder+press+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Start light. Press straight up overhead, don't arch your lower back. Back flat on the pad throughout.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable chest fly (low pulley)</span></div>
-<a href="https://www.youtube.com/results?search_query=low+cable+chest+fly+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Slight bend in elbows throughout. Squeeze at center like hugging a tree. Cables at the bottom, sweep upward and together.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Lateral raises (dumbbells)</span></div>
-<a href="https://www.youtube.com/results?search_query=dumbbell+lateral+raise+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Raise only to shoulder height. Lead with elbows, not hands. Go lighter than you think — these isolate a small muscle.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Tricep pushdown (cable, rope)</span></div>
-<a href="https://www.youtube.com/results?search_query=cable+rope+tricep+pushdown+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Keep elbows glued to your sides. Push down and flare the rope apart at the bottom. Full extension every rep.</div>
-      </div>
-    </div>
-
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Doorway chest stretch 30s each side</div>
-
-    <div class="section-label" style="margin-top:20px">📋 Ground rules</div>
-    <div class="rules-grid">
-      <div class="rule-card"><div class="rule-icon">🥩</div><div class="rule-title">Protein first</div><div class="rule-body">0.7–1g per lb of goal bodyweight daily. Eggs, chicken, Greek yogurt. Hit this before anything else.</div></div>
-      <div class="rule-card"><div class="rule-icon">📈</div><div class="rule-title">Progressive overload</div><div class="rule-body">Add a little weight or a rep every 1–2 weeks. That's how you keep getting stronger.</div></div>
-      <div class="rule-card"><div class="rule-icon">😴</div><div class="rule-title">Sleep = growth</div><div class="rule-body">Muscle is built during sleep. 7–9 hours is part of the program, not optional.</div></div>
-      <div class="rule-card"><div class="rule-icon">💧</div><div class="rule-title">Hydration</div><div class="rule-body">80–100oz of water daily. More on workout days. Dehydration kills performance.</div></div>
-      <div class="rule-card"><div class="rule-icon">🔁</div><div class="rule-title">Consistency wins</div><div class="rule-body">Missed a day? Pick back up. Two months of 80% beats one perfect week every time.</div></div>
-      <div class="rule-card"><div class="rule-icon">🚫</div><div class="rule-title">Don't skip legs</div><div class="rule-body">Leg day burns the most calories and releases the most growth hormone. It matters.</div></div>
     </div>
   </div>
 
-  <!-- ===== TUE ===== -->
-  <div class="day-view" id="day-tue">
-    <div class="day-header">
-      <div class="day-tag">Upper body · Pull</div>
-      <div class="day-title">Pull day</div>
-      <div class="day-muscles">Back · Biceps · Rear delts</div>
-      <div class="day-focus">Pulling movements build back width, posture, and arm thickness. Cables and dumbbells.</div>
-    </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill · 10 arm swings · Cat-cow stretch 10 reps</div>
-    <div class="section-label">Exercises</div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Lat pulldown (cable machine)</span></div>
-<a href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Pull bar to upper chest, lean back slightly. Imagine pulling your elbows down to your hips — not yanking with your arms.</div>
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Pec deck / chest fly machine</span><span class="ex-muscle">Inner chest</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=pec+deck+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Elbows at shoulder height on the pads. Squeeze chest hard at center, slow on the return. Don't let the weight slam back — control it all the way.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-2')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-2-notes')">
+        </div>
+        <div class="log-history" id="log-mon-2"></div>
       </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated cable row</span></div>
-<a href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Sit tall, pull handle to belly button. Squeeze shoulder blades together at the end. Don't round your back on the return.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Dumbbell bicep curl</span></div>
-<a href="https://www.youtube.com/results?search_query=dumbbell+bicep+curl+proper+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">No swinging. 3 seconds on the way down. Keep elbows at your sides throughout.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Face pulls (cable, rope at eye level)</span></div>
-<a href="https://www.youtube.com/results?search_query=cable+face+pull+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Pull rope to your face, elbows flare outward. Great for posture and shoulder health. Don't skip this one.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Dumbbell shrugs</span></div>
-<a href="https://www.youtube.com/results?search_query=dumbbell+shrugs+proper+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Straight up and down — no rolling. Hold at the top for 1 second. Heavy is fine here.</div>
-      </div>
-    </div>
-
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Cross-body shoulder stretch 30s each arm · Lat stretch</div>
-  </div>
-
-  <!-- ===== WED ===== -->
-  <div class="day-view" id="day-wed">
-    <div class="day-header">
-      <div class="day-tag">Recovery</div>
-      <div class="day-title">Rest day</div>
-      <div class="day-muscles">Walk · Stretch · Recover</div>
-      <div class="day-focus">Muscles grow during rest, not during training. This day is literally part of the program.</div>
-    </div>
-    <div class="section-label">Today's goals</div>
-    <div class="info-box">
-      <ul class="rest-list">
-        <li><span class="rest-icon">🚶</span>Your 10k steps walk — keep this as your baseline habit</li>
-        <li><span class="rest-icon">🧘</span>15–20 min light stretching or beginner yoga (YouTube)</li>
-        <li><span class="rest-icon">🌙</span>Prioritize sleep tonight — 7–9 hours is when you actually grow</li>
-        <li><span class="rest-icon">💧</span>Hydrate — aim for 80–100oz of water</li>
-      </ul>
     </div>
   </div>
 
-  <!-- ===== THU ===== -->
-  <div class="day-view" id="day-thu">
-    <div class="day-header">
-      <div class="day-tag">Lower body</div>
-      <div class="day-title">Leg day</div>
-      <div class="day-muscles">Quads · Hamstrings · Glutes · Calves</div>
-      <div class="day-focus">Legs are your biggest muscle group — this burns the most calories and releases the most growth hormone. Don't skip it.</div>
-    </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min bike or treadmill · 10 bodyweight squats · 10 leg swings each side</div>
-    <div class="section-label">Exercises</div>
+  <div class="cluster-label">📍 Cable station</div>
 
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Leg press (machine)</span></div>
-<a href="https://www.youtube.com/results?search_query=leg+press+machine+form+beginners" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Feet shoulder width, mid-platform. Don't lock knees at the top. Start lighter than you think — range of motion matters more than weight.</div>
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable chest fly (low pulley)</span><span class="ex-muscle">Chest</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=low+cable+chest+fly+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Cables at the bottom, sweep upward and together. Slight bend in elbows throughout. Squeeze at center like hugging a tree.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-3')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-3-notes')">
+        </div>
+        <div class="log-history" id="log-mon-3"></div>
       </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Leg extension (machine)</span></div>
-<a href="https://www.youtube.com/results?search_query=leg+extension+machine+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Isolates your quads. Controlled — don't kick up fast. Slow on the way down. Full extension at the top.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Leg curl (seated or lying machine)</span></div>
-<a href="https://www.youtube.com/results?search_query=seated+leg+curl+machine+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Hamstrings. Curl all the way through, squeeze at full contraction. Slow and controlled on the return.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Hip abduction machine</span></div>
-<a href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Push outward against the pads. Great for glutes and hip stability. Don't just throw legs out — feel the squeeze at the top.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Calf raises (machine or standing)</span></div>
-<a href="https://www.youtube.com/results?search_query=calf+raises+machine+proper+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">20 reps</span><span class="badge">30s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Full range of motion — all the way up, all the way down. Slow descent. Calves respond best to high reps and full stretch.</div>
-      </div>
-    </div>
-
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Quad stretch 30s each · Seated hamstring stretch 45s each side</div>
-  </div>
-
-  <!-- ===== FRI ===== -->
-  <div class="day-view" id="day-fri">
-    <div class="day-header">
-      <div class="day-tag">Full body</div>
-      <div class="day-title">Full body / Core</div>
-      <div class="day-muscles">Compound moves · Abs · Stability</div>
-      <div class="day-focus">Compounds hit everything at once. Core work is invisible when you have it and obvious when you don't.</div>
-    </div>
-    <div class="info-box">🔥 <strong>Warmup:</strong> 5 min walk · Hip circles · Arm swings · 5 inchworms</div>
-    <div class="section-label">Exercises</div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Goblet squat (dumbbell)</span></div>
-<a href="https://www.youtube.com/results?search_query=goblet+squat+form+tutorial+beginners" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Hold one dumbbell at chest height. Squat deep, chest up, knees track over toes. Elbows inside your knees at the bottom.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Dumbbell Romanian deadlift</span></div>
-<a href="https://www.youtube.com/results?search_query=dumbbell+romanian+deadlift+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">60s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Hinge at hips, soft knees. Feel the stretch in your hamstrings. Flat back always. Dumbbells stay close to your legs throughout.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable woodchop (high to low)</span></div>
-<a href="https://www.youtube.com/results?search_query=cable+woodchop+high+to+low+form" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 each side</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Cable set high, pull diagonally down across your body. Pivot your back foot. Control the return — don't let the cable pull you.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Plank (forearm)</span></div>
-<a href="https://www.youtube.com/results?search_query=forearm+plank+proper+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">20–40s hold</span><span class="badge">30s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Elbows under shoulders, squeeze glutes and core. Don't let hips sag or rise. Breathe steadily. Add 5 seconds per week.</div>
-      </div>
-    </div>
-
-    <div class="ex-card">
-      <div class="ex-body">
-        <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Hanging knee raises (captain's chair)</span></div>
-<a href="https://www.youtube.com/results?search_query=captains+chair+knee+raise+form+tutorial" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;text-decoration:none;border-bottom:0.5px solid var(--border);margin-bottom:8px;">
-        <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,59,48,0.15);flex-shrink:0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg>
-        </span>
-        <span style="font-size:13px;color:#ff3b30;font-weight:500;">Watch form demo on YouTube ↗</span>
-      </a>
-        <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–15 reps</span><span class="badge">45s rest</span></div>
-        <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
-        <div class="tip-text">Slow and controlled — don't swing. Bring knees to chest, lower slowly. The slow lower is where the work happens.</div>
-      </div>
-    </div>
-
-    <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Full body stretch routine</div>
-  </div>
-
-  <!-- ===== SAT ===== -->
-  <div class="day-view" id="day-sat">
-    <div class="day-header">
-      <div class="day-tag">Cardio</div>
-      <div class="day-title">Cardio day</div>
-      <div class="day-muscles">Endurance · Fat burn · Active</div>
-      <div class="day-focus">Cardio accelerates fat loss without eating into muscle when kept moderate. 30–45 min is the sweet spot.</div>
-    </div>
-    <div class="section-label">Pick one — 30–45 min</div>
-    <div class="info-box">
-      <div class="cardio-item"><div class="cardio-name">🏃 Treadmill incline walk</div><div class="cardio-detail">30–40 min at 3.5–4mph, 8–12% incline. Low impact, high fat burn. Your existing walking habit — just steeper.</div></div>
-      <div class="cardio-item"><div class="cardio-name">🔄 Elliptical</div><div class="cardio-detail">30–40 min moderate pace. Easy on joints, full body. Good option if legs are sore from Thursday.</div></div>
-      <div class="cardio-item"><div class="cardio-name">🚴 Stationary bike</div><div class="cardio-detail">30 min steady, or 20 min intervals: 1 min hard / 2 min easy × 7. Intervals burn more in less time.</div></div>
-      <div class="cardio-item"><div class="cardio-name">🌳 Outdoor walk / jog</div><div class="cardio-detail">Your existing habit extended to 45–60 min. Add jogging intervals when you're ready.</div></div>
     </div>
   </div>
 
-  <!-- ===== SUN ===== -->
-  <div class="day-view" id="day-sun">
-    <div class="day-header">
-      <div class="day-tag">Rest</div>
-      <div class="day-title">Full rest</div>
-      <div class="day-muscles">Eat well · Sleep · Reset</div>
-      <div class="day-focus">You don't build muscle while training — you build it while resting. Earn this day.</div>
-    </div>
-    <div class="section-label">Today's goals</div>
-    <div class="info-box">
-      <ul class="rest-list">
-        <li><span class="rest-icon">🍳</span>Meal prep if possible — protein-first meals ready saves the whole week</li>
-        <li><span class="rest-icon">🚶</span>Light walk if you feel like it — never forced</li>
-        <li><span class="rest-icon">🌙</span>7–9 hours of sleep — this is part of the program</li>
-        <li><span class="rest-icon">💧</span>Hydrate: aim for 80–100oz of water today</li>
-      </ul>
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Tricep pushdown (cable, rope)</span><span class="ex-muscle">Triceps</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+rope+tricep+pushdown+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Elbows glued to your sides. Push down and flare the rope apart at the bottom. Full extension every rep.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-4')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-4-notes')">
+        </div>
+        <div class="log-history" id="log-mon-4"></div>
+      </div>
     </div>
   </div>
 
-  <!-- WEEK BAR -->
-  <div class="week-bar">
-    <div class="section-label" style="margin-bottom:0">Weekly structure</div>
-    <div class="week-pills" id="week-pills">
-      <button class="week-pill active" onclick="showDay('mon',this)">Mon · Push</button>
-      <button class="week-pill" onclick="showDay('tue',this)">Tue · Pull</button>
-      <button class="week-pill" onclick="showDay('wed',this)">Wed · Rest</button>
-      <button class="week-pill" onclick="showDay('thu',this)">Thu · Legs</button>
-      <button class="week-pill" onclick="showDay('fri',this)">Fri · Full body</button>
-      <button class="week-pill" onclick="showDay('sat',this)">Sat · Cardio</button>
-      <button class="week-pill" onclick="showDay('sun',this)">Sun · Rest</button>
+  <div class="cluster-label">📍 Dumbbells</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Seated dumbbell shoulder press</span><span class="ex-muscle">Front delts</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+dumbbell+shoulder+press+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Start light. Press straight up, back flat against the pad. Don't arch lower back. Control the descent — 3 seconds down.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-5')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-5-notes')">
+        </div>
+        <div class="log-history" id="log-mon-5"></div>
+      </div>
     </div>
   </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">6</span><span class="ex-name">Lateral raises (dumbbells)</span><span class="ex-muscle">Side delts</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+lateral+raise+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Lead with elbows, raise only to shoulder height. Go lighter than you think — these isolate a small muscle. No swinging.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-6')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-6-notes')">
+        </div>
+        <div class="log-history" id="log-mon-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card optional">
+    <div class="optional-banner">⚡ Optional — if you have time</div>
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num opt">+</span><span class="ex-name">Overhead tricep extension (cable)</span><span class="ex-muscle">Tricep long head</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+overhead+tricep+extension+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Rope attachment, cable high. Face away from machine, elbows by your ears. Extend forearms forward and down. Hits the long head of the tricep that pushdown misses — makes arms look full from all angles.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'mon-opt')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'mon-opt-notes')">
+        </div>
+        <div class="log-history" id="log-mon-opt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Doorway chest stretch 30s · Cross-body shoulder stretch 30s each</div>
+</div>
+
+<!-- ========== TUE — PULL ========== -->
+<div class="day-view" id="day-tue">
+  <div class="day-header">
+    <div class="day-tag">Upper body · Pull</div>
+    <div class="day-title">Tuesday — Pull Day</div>
+    <div class="day-muscles">Back · Biceps · Rear Delts · Traps</div>
+    <div class="day-focus">All pulling movements. Cables first, then machines, then dumbbells — stay clustered.</div>
+  </div>
+  <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill · 10 arm swings · Cat-cow stretch 10 reps</div>
+
+  <div class="cluster-label">📍 Cable station</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Lat pulldown (cable machine)</span><span class="ex-muscle">Lats</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=lat+pulldown+form+tutorial+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Pull bar to upper chest, lean back slightly. Think elbows down to your hips — not yanking with your arms.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-1')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-1-notes')">
+        </div>
+        <div class="log-history" id="log-tue-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Seated cable row</span><span class="ex-muscle">Mid back</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+cable+row+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–12 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Sit tall, pull handle to belly button. Squeeze shoulder blades hard at the end. Don't round your back on the return.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-2')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-2-notes')">
+        </div>
+        <div class="log-history" id="log-tue-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Face pulls (cable, rope at eye level)</span><span class="ex-muscle">Rear delts</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+face+pull+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Pull rope to your face, elbows flare outward. Great for posture and shoulder health. Don't skip this one — most guys neglect rear delts and it shows.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-3')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-3-notes')">
+        </div>
+        <div class="log-history" id="log-tue-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cluster-label">📍 Dumbbells</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Dumbbell bicep curl</span><span class="ex-muscle">Biceps</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+bicep+curl+proper+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">No swinging. 3 seconds on the way down. Elbows stay at your sides throughout.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-4')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-4-notes')">
+        </div>
+        <div class="log-history" id="log-tue-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Dumbbell shrugs</span><span class="ex-muscle">Traps</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=dumbbell+shrugs+proper+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Straight up and down — no rolling. Hold at the top for 1 second. Heavy is fine here.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-5')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-5-notes')">
+        </div>
+        <div class="log-history" id="log-tue-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">6</span><span class="ex-name">Hammer curl (dumbbells)</span><span class="ex-muscle">Brachialis · Forearms</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hammer+curl+dumbbell+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Palms facing each other (neutral grip), curl up same as a bicep curl. Targets the brachialis muscle under the bicep which adds thickness to the arm, plus forearm development.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-6')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-6-notes')">
+        </div>
+        <div class="log-history" id="log-tue-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card optional">
+    <div class="optional-banner">⚡ Optional — if you have time</div>
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num opt">+</span><span class="ex-name">Reverse curl (EZ bar or cable)</span><span class="ex-muscle">Forearms · Brachialis</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=reverse+curl+forearm+exercise+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Overhand grip, curl up. Directly trains the forearm extensors — the most neglected muscle group for most beginners. Pairs well with hammer curls already in this session.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'tue-opt')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'tue-opt-notes')">
+        </div>
+        <div class="log-history" id="log-tue-opt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Cross-body shoulder stretch 30s each · Lat stretch</div>
+</div>
+
+<!-- ========== WED — REST ========== -->
+<div class="day-view" id="day-wed">
+  <div class="day-header">
+    <div class="day-tag">Recovery</div>
+    <div class="day-title">Wednesday — Rest</div>
+    <div class="day-muscles">Walk · Stretch · Recover</div>
+    <div class="day-focus">Muscles grow during rest, not during training. This day is part of the program.</div>
+  </div>
+  <div class="section-label">Today's goals</div>
+  <div class="info-box">
+    <ul class="rest-list">
+      <li><span class="rest-icon">🚶</span>Your 10k steps walk — keep this as your daily baseline</li>
+      <li><span class="rest-icon">🧘</span>15–20 min light stretching or beginner yoga (YouTube)</li>
+      <li><span class="rest-icon">🌙</span>Prioritize sleep — 7–9 hours is when you actually grow</li>
+      <li><span class="rest-icon">💧</span>Hydrate — aim for 80–100oz of water</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========== THU — LEGS ========== -->
+<div class="day-view" id="day-thu">
+  <div class="day-header">
+    <div class="day-tag">Lower body</div>
+    <div class="day-title">Thursday — Leg Day</div>
+    <div class="day-muscles">Quads · Hamstrings · Glutes · Adductors · Calves</div>
+    <div class="day-focus">Biggest muscle group = most calories burned. Machines clustered together — minimal walking. Full rest tomorrow so push it today.</div>
+  </div>
+  <div class="info-box">🔥 <strong>Warmup:</strong> 5 min bike or treadmill · 10 bodyweight squats · 10 leg swings each side</div>
+
+  <div class="cluster-label">📍 Leg machines (all in one area)</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Leg press (machine)</span><span class="ex-muscle">Quads · Glutes</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+press+machine+form+beginners" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Feet shoulder width, mid-platform. Don't lock knees at the top. Start lighter than you think — range of motion matters more than weight.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-1')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-1-notes')">
+        </div>
+        <div class="log-history" id="log-thu-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Leg extension (machine)</span><span class="ex-muscle">Quads</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=leg+extension+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Controlled — don't kick up fast. Slow on the way down. Full extension at the top, squeeze the quad.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-2')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-2-notes')">
+        </div>
+        <div class="log-history" id="log-thu-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Leg curl (seated or lying machine)</span><span class="ex-muscle">Hamstrings</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+leg+curl+machine+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Curl all the way through, squeeze at full contraction. Slow and controlled on the return. Don't stop halfway.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-3')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-3-notes')">
+        </div>
+        <div class="log-history" id="log-thu-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Hip abduction machine</span><span class="ex-muscle">Outer glutes</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+abduction+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Push outward against the pads. Feel the outer glute squeeze at the top. Controlled return.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-4')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-4-notes')">
+        </div>
+        <div class="log-history" id="log-thu-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Hip adduction machine</span><span class="ex-muscle">Inner thighs</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=hip+adduction+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Squeeze legs together against the pads. Slow on the return — don't let the machine pull your legs apart. Inner thigh is completely missing from most beginner programs.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-5')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-5-notes')">
+        </div>
+        <div class="log-history" id="log-thu-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">6</span><span class="ex-name">Calf raises (machine or standing)</span><span class="ex-muscle">Calves</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=calf+raises+machine+proper+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">20 reps</span><span class="badge">30s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Full range — all the way up, all the way down. Slow descent. Calves respond best to high reps and full stretch at the bottom.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-6')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-6-notes')">
+        </div>
+        <div class="log-history" id="log-thu-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card optional">
+    <div class="optional-banner">⚡ Optional — if you have time</div>
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num opt">+</span><span class="ex-name">Glute kickback machine</span><span class="ex-muscle">Glutes</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=glute+kickback+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps each</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Isolates the glute directly. Kick back and squeeze hard at full extension — hold 1 second. Don't let your lower back arch to compensate. OneLife likely has this machine near the leg area.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'thu-opt')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'thu-opt-notes')">
+        </div>
+        <div class="log-history" id="log-thu-opt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Quad stretch 30s each · Seated hamstring stretch 45s each</div>
+</div>
+
+<!-- ========== FRI — UPPER / CORE ========== -->
+<div class="day-view" id="day-fri">
+  <div class="day-header">
+    <div class="day-tag">Upper body + core</div>
+    <div class="day-title">Friday — Upper Body & Core</div>
+    <div class="day-muscles">Back · Shoulders · Core · Arms</div>
+    <div class="day-focus">No leg movements today — legs are recovering from Thursday. Pure upper body and core. Cables and machines only, clustered together.</div>
+  </div>
+  <div class="info-box">🔥 <strong>Warmup:</strong> 5 min treadmill · Arm swings · Hip circles · 5 inchworms</div>
+
+  <div class="cluster-label">📍 Cable station</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">1</span><span class="ex-name">Cable woodchop (high to low)</span><span class="ex-muscle">Obliques · Core</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+woodchop+high+to+low+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 each side</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Cable high, pull diagonally down across your body. Pivot your back foot. Control the return — don't let the cable pull you. Best rotational core exercise for building visible obliques.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'fri-1')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-1-notes')">
+        </div>
+        <div class="log-history" id="log-fri-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">2</span><span class="ex-name">Straight arm pulldown (cable)</span><span class="ex-muscle">Lats · Serratus</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=straight+arm+cable+pulldown+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Arms straight, slight forward lean. Pull bar down to your hips in an arc. Stretches and contracts the lats differently than a pulldown. Gives that V-taper look over time.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'fri-2')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-2-notes')">
+        </div>
+        <div class="log-history" id="log-fri-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">3</span><span class="ex-name">Cable crunch (kneeling)</span><span class="ex-muscle">Abs</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=cable+crunch+kneeling+proper+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Kneel facing the cable, rope at the top. Hold rope at sides of head and crunch elbows toward knees. You can actually load the abs with weight here unlike floor crunches.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'fri-3')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-3-notes')">
+        </div>
+        <div class="log-history" id="log-fri-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cluster-label">📍 Machines</div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">4</span><span class="ex-name">Rear delt fly machine</span><span class="ex-muscle">Rear delts · Rhomboids</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=rear+delt+fly+machine+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Chest against pad, arms out to sides. Squeeze the rear delts and rhomboids at full extension — hold 1 second. Critical for posture and shoulder balance. Most people skip this and wonder why their shoulders round forward.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'fri-4')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-4-notes')">
+        </div>
+        <div class="log-history" id="log-fri-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">5</span><span class="ex-name">Plank (forearm)</span><span class="ex-muscle">Core · Transverse abs</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=forearm+plank+proper+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">30–45s hold</span><span class="badge">30s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Elbows under shoulders, squeeze glutes and core. Don't let hips sag or rise. Breathe steadily. Add 5 seconds per week.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="text" placeholder="time (sec)" oninput="autoSave(this,'fri-5')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-5-notes')">
+        </div>
+        <div class="log-history" id="log-fri-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num">6</span><span class="ex-name">Captain's chair knee raises</span><span class="ex-muscle">Lower abs · Hip flexors</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=captains+chair+knee+raise+form+tutorial" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">10–15 reps</span><span class="badge">45s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Slow and controlled — don't swing. Bring knees to chest, lower slowly. The slow lower is where the work is.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="reps" oninput="autoSave(this,'fri-6')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-6-notes')">
+        </div>
+        <div class="log-history" id="log-fri-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card optional">
+    <div class="optional-banner">⚡ Optional — if you have time</div>
+    <div class="ex-body">
+      <div class="ex-name-row"><span class="ex-num opt">+</span><span class="ex-name">Seated machine row (wide grip)</span><span class="ex-muscle">Upper back · Rhomboids</span></div>
+      <a class="demo-link" href="https://www.youtube.com/results?search_query=seated+machine+row+wide+grip+form" target="_blank"><div class="demo-icon"><svg width="12" height="12" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ff3b30"/></svg></div><span class="demo-text">Watch form demo ↗</span></a>
+      <div class="ex-meta"><span class="badge accent">3 sets</span><span class="badge">12 reps</span><span class="badge">60s rest</span></div>
+      <button class="tip-toggle" onclick="toggleTip(this)">▶ Form tip</button>
+      <div class="tip-text">Wide grip hits the upper back and rhomboids differently than the cable row. Squeeze hard at the end — think about pulling your elbows behind you. Great finishing move for back thickness.</div>
+      <div class="log-section">
+        <div class="log-label">Log this set</div>
+        <div class="log-row">
+          <input class="log-input" type="number" placeholder="lbs" oninput="autoSave(this,'fri-opt')">
+          <input class="log-notes" type="text" placeholder="notes" oninput="autoSave(this,'fri-opt-notes')">
+        </div>
+        <div class="log-history" id="log-fri-opt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">❄️ <strong>Cooldown:</strong> 5 min walk · Full body stretch routine · Child's pose 45s</div>
+</div>
+
+<!-- ========== SAT — CARDIO ========== -->
+<div class="day-view" id="day-sat">
+  <div class="day-header">
+    <div class="day-tag">Cardio</div>
+    <div class="day-title">Saturday — Cardio Day</div>
+    <div class="day-muscles">Endurance · Fat burn · Active recovery</div>
+    <div class="day-focus">30–45 min steady cardio. Accelerates fat loss without eating into muscle when kept moderate.</div>
+  </div>
+  <div class="section-label">Pick one — 30–45 min</div>
+  <div class="cardio-block"><div class="cardio-title">🏃 Treadmill incline walk</div><div class="cardio-detail">30–40 min at 3.5–4mph, 8–12% incline. Low impact, high fat burn. Your existing habit — just steeper.</div></div>
+  <div class="cardio-block"><div class="cardio-title">🔄 Elliptical</div><div class="cardio-detail">30–40 min moderate pace. Easy on joints, full body movement. Good if legs are still sore from Thursday.</div></div>
+  <div class="cardio-block"><div class="cardio-title">🚴 Stationary bike</div><div class="cardio-detail">30 min steady, or 20 min intervals: 1 min hard / 2 min easy × 7. Intervals burn more in less time.</div></div>
+  <div class="cardio-block"><div class="cardio-title">🌳 Outdoor walk / jog</div><div class="cardio-detail">Your existing habit extended to 45–60 min. Add jogging intervals when you're ready to progress.</div></div>
+</div>
+
+<!-- ========== SUN — REST ========== -->
+<div class="day-view" id="day-sun">
+  <div class="day-header">
+    <div class="day-tag">Rest</div>
+    <div class="day-title">Sunday — Full Rest</div>
+    <div class="day-muscles">Eat well · Sleep · Reset</div>
+    <div class="day-focus">Complete recovery. You don't build muscle while training — you build it while resting.</div>
+  </div>
+  <div class="section-label">Today's goals</div>
+  <div class="info-box">
+    <ul class="rest-list">
+      <li><span class="rest-icon">🍳</span>Meal prep — protein-first meals ready for the week saves every day</li>
+      <li><span class="rest-icon">🚶</span>Light walk if you feel like it — never forced</li>
+      <li><span class="rest-icon">🌙</span>7–9 hours sleep — this is part of the program</li>
+      <li><span class="rest-icon">💧</span>Hydrate — 80–100oz of water today</li>
+    </ul>
+  </div>
+
+  <div class="section-label" style="margin-top:20px">📋 Ground rules</div>
+  <div class="rules-grid">
+    <div class="rule-card"><div class="rule-icon">🥩</div><div class="rule-title">Protein first</div><div class="rule-body">0.7–1g per lb of goal bodyweight daily. Eggs, chicken, Greek yogurt, ground turkey.</div></div>
+    <div class="rule-card"><div class="rule-icon">📈</div><div class="rule-title">Progressive overload</div><div class="rule-body">Add a rep or a little weight every 1–2 weeks. Log it below every exercise so you know.</div></div>
+    <div class="rule-card"><div class="rule-icon">😴</div><div class="rule-title">Sleep = growth</div><div class="rule-body">7–9 hours. Muscle is built during sleep. Non-negotiable.</div></div>
+    <div class="rule-card"><div class="rule-icon">💧</div><div class="rule-title">Hydration</div><div class="rule-body">80–100oz daily. More on gym days. Dehydration kills performance fast.</div></div>
+    <div class="rule-card"><div class="rule-icon">🔁</div><div class="rule-title">Consistency wins</div><div class="rule-body">Missed a day? Pick back up. Two months of 80% beats one perfect week.</div></div>
+    <div class="rule-card"><div class="rule-icon">🚫</div><div class="rule-title">Don't skip legs</div><div class="rule-body">Leg day burns the most calories and releases the most growth hormone. It matters.</div></div>
+  </div>
+</div>
+
+<!-- WEEK BAR -->
+<div class="week-bar">
+  <div class="section-label" style="margin-bottom:0">Weekly structure</div>
+  <div class="week-pills">
+    <button class="week-pill active" onclick="showDay('mon')">Mon · Push</button>
+    <button class="week-pill" onclick="showDay('tue')">Tue · Pull</button>
+    <button class="week-pill" onclick="showDay('wed')">Wed · Rest</button>
+    <button class="week-pill" onclick="showDay('thu')">Thu · Legs</button>
+    <button class="week-pill" onclick="showDay('fri')">Fri · Upper+Core</button>
+    <button class="week-pill" onclick="showDay('sat')">Sat · Cardio</button>
+    <button class="week-pill" onclick="showDay('sun')">Sun · Rest</button>
+  </div>
+</div>
 
 </div><!-- /content -->
 
 <script>
-  const days = ['mon','tue','wed','thu','fri','sat','sun'];
+const days = ['mon','tue','wed','thu','fri','sat','sun'];
 
-  function showDay(id, triggerEl) {
-    days.forEach(d => {
-      document.getElementById('day-' + d).classList.remove('active');
-    });
-    document.getElementById('day-' + id).classList.add('active');
+function showDay(id) {
+  days.forEach(d => document.getElementById('day-'+d).classList.remove('active'));
+  document.getElementById('day-'+id).classList.add('active');
+  document.querySelectorAll('.day-pill').forEach((p,i) => p.classList.toggle('active', days[i]===id));
+  document.querySelectorAll('.week-pill').forEach((p,i) => p.classList.toggle('active', days[i]===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-    document.querySelectorAll('.day-pill').forEach((p, i) => {
-      p.classList.toggle('active', days[i] === id);
-    });
-    document.querySelectorAll('.week-pill').forEach((p, i) => {
-      p.classList.toggle('active', days[i] === id);
-    });
+function toggleTip(btn) {
+  const tip = btn.nextElementSibling;
+  const open = tip.classList.toggle('open');
+  btn.textContent = open ? '▼ Hide tip' : '▶ Form tip';
+}
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function autoSave(input, key) {
+  localStorage.setItem('log-'+key, input.value);
+  const histEl = document.getElementById('log-'+key.replace('-notes',''));
+  if (histEl) updateHistory(key.split('-notes')[0]);
+}
+
+function updateHistory(key) {
+  const weight = localStorage.getItem('log-'+key) || '';
+  const notes = localStorage.getItem('log-'+key+'-notes') || '';
+  const el = document.getElementById('log-'+key);
+  if (el && (weight || notes)) {
+    el.textContent = '📝 Last logged: ' + (weight ? weight+'lbs' : '') + (notes ? ' — '+notes : '');
   }
+}
 
-  function toggleTip(btn) {
-    const tip = btn.nextElementSibling;
-    const open = tip.classList.toggle('open');
-    btn.textContent = open ? '▼ Hide tip' : '▶ Form tip';
-  }
+function loadAll() {
+  document.querySelectorAll('.log-input, .log-notes').forEach(input => {
+    const key = input.getAttribute('oninput').match(/'([^']+)'/)[1];
+    const saved = localStorage.getItem('log-'+key);
+    if (saved) input.value = saved;
+  });
+  // Update all history displays
+  const keys = ['mon-1','mon-2','mon-3','mon-4','mon-5','mon-6','mon-opt',
+                 'tue-1','tue-2','tue-3','tue-4','tue-5','tue-6','tue-opt',
+                 'thu-1','thu-2','thu-3','thu-4','thu-5','thu-6','thu-opt',
+                 'fri-1','fri-2','fri-3','fri-4','fri-5','fri-6','fri-opt'];
+  keys.forEach(k => updateHistory(k));
+}
 
-  // Show install hint on iOS Safari
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone === true;
-  if (isIOS && !isStandalone) {
-    document.getElementById('install-hint').classList.add('show');
-  }
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+if (isIOS && !window.navigator.standalone) document.getElementById('install-hint').classList.add('show');
 
-  // Auto-select today's day
-  const todayMap = [null,'mon','tue','wed','thu','fri','sat','sun'];
-  const todayId = todayMap[new Date().getDay()];
-  if (todayId) showDay(todayId);
+const todayMap = [null,'mon','tue','wed','thu','fri','sat','sun'];
+const todayId = todayMap[new Date().getDay()];
+if (todayId) showDay(todayId);
+
+loadAll();
 </script>
-
 </body>
 </html>
